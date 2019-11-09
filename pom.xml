@@ -17,6 +17,7 @@
 	<modules>
 		<module>persistence-chronicle</module>
 		<module>persistence-leveldb</module>
+		<module>persistence-rocksdb</module>
 	</modules>
 
 	<properties>
