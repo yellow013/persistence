@@ -4,10 +4,10 @@ package io.nagoya.persistence.rocksdb;
  * Hello world!
  *
  */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-    }
+public class UseExample {
+	
+	public static void main(String[] args) {
+		System.out.println("Hello World!");
+	}
+	
 }
