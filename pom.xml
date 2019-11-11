@@ -4,12 +4,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- This is commons pom.xml -->
+	<!-- This is persistence pom.xml -->
 	<groupId>io.nagoya</groupId>
 	<artifactId>persistence</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
-	<url>https://github.com/yellow013/commons.git</url>
+	<url>https://github.com/yellow013/persistence.git</url>
 
 	<name>commons</name>
 	<packaging>pom</packaging>
@@ -47,6 +47,11 @@
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.ffreedom</groupId>
+			<artifactId>commons-core</artifactId>
 		</dependency>
 	</dependencies>
 
