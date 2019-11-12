@@ -15,8 +15,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>persistence-avro</module>
 		<module>persistence-chronicle</module>
-		<module>persistence-leveldb</module>
 		<module>persistence-rocksdb</module>
 	</modules>
 
