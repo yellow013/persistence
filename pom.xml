@@ -18,6 +18,7 @@
 		<module>persistence-avro</module>
 		<module>persistence-chronicle</module>
 		<module>persistence-rocksdb</module>
+		<module>persistence-json</module>
 	</modules>
 
 	<properties>
