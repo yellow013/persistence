@@ -1,4 +1,4 @@
-package io.nagoya.persistence.rocksdb;
+package io.mercury.persistence.rocksdb;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package io.nagoya.persistence.rocksdb;
+package io.mercury.persistence.rocksdb;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

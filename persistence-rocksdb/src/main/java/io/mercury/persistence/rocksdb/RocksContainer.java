@@ -1,4 +1,4 @@
-package io.nagoya.persistence.rocksdb;
+package io.mercury.persistence.rocksdb;
 
 public class RocksContainer<K extends RocksKey, V extends RocksValue> {
 	
