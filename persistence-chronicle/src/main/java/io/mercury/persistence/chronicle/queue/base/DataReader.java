@@ -1,4 +1,4 @@
-package io.nagoya.persistence.chronicle.queue.base;
+package io.mercury.persistence.chronicle.queue.base;
 
 import io.ffreedom.common.annotations.lang.MayThrowsRuntimeException;
 import net.openhft.chronicle.queue.ExcerptTailer;

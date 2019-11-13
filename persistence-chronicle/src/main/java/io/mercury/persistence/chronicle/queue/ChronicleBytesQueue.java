@@ -1,10 +1,10 @@
-package io.nagoya.persistence.chronicle.queue;
+package io.mercury.persistence.chronicle.queue;
 
 import java.nio.ByteBuffer;
 
-import io.nagoya.persistence.chronicle.queue.accessor.BytesReader;
-import io.nagoya.persistence.chronicle.queue.accessor.BytesWriter;
-import io.nagoya.persistence.chronicle.queue.base.ChronicleDataQueue;
+import io.mercury.persistence.chronicle.queue.accessor.BytesReader;
+import io.mercury.persistence.chronicle.queue.accessor.BytesWriter;
+import io.mercury.persistence.chronicle.queue.base.ChronicleDataQueue;
 
 public class ChronicleBytesQueue extends ChronicleDataQueue<ByteBuffer, BytesReader, BytesWriter> {
 

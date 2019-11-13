@@ -1,4 +1,4 @@
-package io.nagoya.persistence.chronicle.queue.base;
+package io.mercury.persistence.chronicle.queue.base;
 
 import static io.ffreedom.common.utils.StringUtil.isPath;
 

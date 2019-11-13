@@ -5,10 +5,10 @@ import java.time.ZoneOffset;
 
 import org.junit.Test;
 
-import io.nagoya.persistence.chronicle.queue.ChronicleStringQueue;
-import io.nagoya.persistence.chronicle.queue.accessor.StringReader;
-import io.nagoya.persistence.chronicle.queue.accessor.StringWriter;
-import io.nagoya.persistence.chronicle.queue.base.FileCycle;
+import io.mercury.persistence.chronicle.queue.ChronicleStringQueue;
+import io.mercury.persistence.chronicle.queue.accessor.StringReader;
+import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
+import io.mercury.persistence.chronicle.queue.base.FileCycle;
 
 public class ChronicleStringQueueTest {
 

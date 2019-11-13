@@ -1,11 +1,11 @@
-package io.nagoya.persistence.chronicle.queue.accessor;
+package io.mercury.persistence.chronicle.queue.accessor;
 
 import java.nio.ByteBuffer;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import io.nagoya.persistence.chronicle.queue.base.DataReader;
-import io.nagoya.persistence.chronicle.queue.base.FileCycle;
+import io.mercury.persistence.chronicle.queue.base.DataReader;
+import io.mercury.persistence.chronicle.queue.base.FileCycle;
 import net.openhft.chronicle.bytes.Bytes;
 import net.openhft.chronicle.queue.ExcerptTailer;
 

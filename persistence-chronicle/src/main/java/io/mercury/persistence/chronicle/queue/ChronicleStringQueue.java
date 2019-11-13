@@ -1,10 +1,10 @@
-package io.nagoya.persistence.chronicle.queue;
+package io.mercury.persistence.chronicle.queue;
 
 import io.ffreedom.common.number.RandomNumber;
-import io.nagoya.persistence.chronicle.queue.accessor.StringReader;
-import io.nagoya.persistence.chronicle.queue.accessor.StringWriter;
-import io.nagoya.persistence.chronicle.queue.base.ChronicleDataQueue;
-import io.nagoya.persistence.chronicle.queue.base.FileCycle;
+import io.mercury.persistence.chronicle.queue.accessor.StringReader;
+import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
+import io.mercury.persistence.chronicle.queue.base.ChronicleDataQueue;
+import io.mercury.persistence.chronicle.queue.base.FileCycle;
 
 public class ChronicleStringQueue extends ChronicleDataQueue<String, StringReader, StringWriter> {
 

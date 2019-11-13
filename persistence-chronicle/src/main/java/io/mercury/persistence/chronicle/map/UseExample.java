@@ -1,4 +1,4 @@
-package io.nagoya.persistence.chronicle.map;
+package io.mercury.persistence.chronicle.map;
 
 import io.ffreedom.common.env.SystemPropertys;
 import io.ffreedom.common.thread.ThreadUtil;
