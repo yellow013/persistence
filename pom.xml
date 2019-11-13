@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- This is persistence pom.xml -->
-	<groupId>io.nagoya</groupId>
+	<groupId>io.mercury</groupId>
 	<artifactId>persistence</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
