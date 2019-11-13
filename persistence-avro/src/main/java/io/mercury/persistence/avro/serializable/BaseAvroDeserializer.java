@@ -1,4 +1,4 @@
-package io.nagoya.persistence.avro.serializable;
+package io.mercury.persistence.avro.serializable;
 
 import org.apache.avro.specific.SpecificDatumReader;
 import org.slf4j.Logger;

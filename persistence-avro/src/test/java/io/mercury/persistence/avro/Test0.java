@@ -1,4 +1,4 @@
-package io.nagoya.persistence.leveldb;
+package io.mercury.persistence.avro;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

@@ -1,4 +1,4 @@
-package io.nagoya.persistence.avro.serializable;
+package io.mercury.persistence.avro.serializable;
 
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.specific.SpecificDatumWriter;
