@@ -22,7 +22,7 @@ import org.rocksdb.RocksIterator;
  */
 public class UseExample {
 
-	private static final String dbPath = "/Users/weiwei/Documents/rocksdb/java/data/";
+	private static final String dbPath = "/tmp/rocksdb/data/";
 
 	static {
 		RocksDB.loadLibrary();
