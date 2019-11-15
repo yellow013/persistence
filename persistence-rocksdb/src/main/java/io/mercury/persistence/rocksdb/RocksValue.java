@@ -2,6 +2,8 @@ package io.mercury.persistence.rocksdb;
 
 import javax.annotation.Nonnull;
 
+import io.netty.buffer.ByteBuf;
+
 public interface RocksValue {
 
 	/**
@@ -9,10 +11,8 @@ public interface RocksValue {
 	 * @return RocksDB value byte[]
 	 */
 	@Nonnull
-	byte[] valueBytes();
+	ByteBuf valueBytes();
 
-	default int valueLength() {
-		return valueBytes().length;
-	}
+	int valueLength();
 
 }
