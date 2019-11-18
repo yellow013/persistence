@@ -6,6 +6,6 @@ public interface RocksReversibleKey extends RocksKey {
 	 * 
 	 * @return RocksDB reverse key byte[]
 	 */
-	byte[] reverseKeyBytes();
+	byte[] reverseKey();
 
 }

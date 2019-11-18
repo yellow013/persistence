@@ -33,7 +33,7 @@ public final class JsonParser {
 	}
 
 	public static ImmutableList<Object> toImmutableList(@Nonnull String json) {
-		return ImmutableLists.newImmutableList(
+		return ImmutableLists.newList(
 				// JSONArray实现List接口, 转换为ImmutableList
 				parseArray(json));
 	}
@@ -49,7 +49,7 @@ public final class JsonParser {
 	}
 
 	public static ImmutableMap<String, Object> toImmutableMap(@Nonnull String json) {
-		return ImmutableMaps.newImmutableMap(
+		return ImmutableMaps.newMap(
 				// JSONObject实现Map接口, 转换为ImmutableMap
 				parseObject(json));
 	}
