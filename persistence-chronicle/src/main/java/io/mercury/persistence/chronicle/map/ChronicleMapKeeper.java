@@ -6,17 +6,13 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.eclipse.collections.api.map.ConcurrentMutableMap;
-import org.eclipse.collections.impl.map.mutable.ConcurrentHashMap;
-
 import io.ffreedom.common.annotations.lang.MayThrowsRuntimeException;
+import io.ffreedom.common.collections.customize.Keeper;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
 
 @ThreadSafe
-public class ChronicleMapKeeper<K, V> {
-
-	private ConcurrentMutableMap<String, ChronicleMap<K, V>> savedMap = ConcurrentHashMap.newMap(64);
+public class ChronicleMapKeeper<K, V> extends Keeper<String, ChronicleMap<K, V>> {
 
 	private ChronicleMapAttributes<K, V> attributes;
 
@@ -27,11 +23,13 @@ public class ChronicleMapKeeper<K, V> {
 	}
 
 	@MayThrowsRuntimeException
+	@Override
 	public ChronicleMap<K, V> acquire(String filename) throws ChronicleIOException {
-		return savedMap.getIfAbsentPutWith(filename, this::newChronicleMap, filename);
+		return super.acquire(filename);
 	}
 
-	private ChronicleMap<K, V> newChronicleMap(String filename) {
+	@Override
+	protected ChronicleMap<K, V> createWith(String filename) {
 		ChronicleMapBuilder<K, V> builder = ChronicleMapBuilder.of(attributes.getKeyClass(), attributes.getValueClass())
 				.putReturnsNull(attributes.isPutReturnsNull()).removeReturnsNull(attributes.isRemoveReturnsNull())
 				.entries(attributes.getEntries());
