@@ -19,12 +19,11 @@
 			<groupId>io.ffreedom</groupId>
 			<artifactId>commons-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro</artifactId>
 			<version>1.9.1</version>
 		</dependency>
-
 	</dependencies>
+	
 </project>
