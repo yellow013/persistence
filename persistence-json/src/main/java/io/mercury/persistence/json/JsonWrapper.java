@@ -1,17 +1,39 @@
 package io.mercury.persistence.json;
 
-import static com.alibaba.fastjson.JSON.toJSONString;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public final class JsonWrapper {
 
-	public static String toJson(@Nonnull Object obj) {
-		return toJSONString(obj);
+	private static final Gson GsonNormal = new GsonBuilder().create();
+
+	public static final String toJson(@Nonnull Object obj) {
+		return GsonNormal.toJson(obj);
 	}
 
-	public static String toJsonWithFormat(@Nonnull Object obj) {
-		return toJSONString(obj, true);
+	private static final Gson GsonHasNulls = new GsonBuilder().serializeNulls().create();
+
+	public static final String toJsonHasNulls(@Nonnull Object obj) {
+		return GsonHasNulls.toJson(obj);
+	}
+
+	public static void main(String[] args) {
+
+		Map<String, String> map = new HashMap<>();
+		map.put("A", "1");
+		map.put("B", "2");
+		map.put("C", "11");
+		map.put("D", null);
+		map.put("E", null);
+
+		System.out.println(toJson(map));
+		System.out.println(toJsonHasNulls(map));
+
 	}
 
 }
