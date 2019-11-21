@@ -11,14 +11,15 @@
 
 	<url>https://github.com/yellow013/persistence.git</url>
 
-	<name>commons</name>
+	<name>persistence</name>
 	<packaging>pom</packaging>
 
 	<modules>
 		<module>persistence-avro</module>
 		<module>persistence-chronicle</module>
-		<module>persistence-rocksdb</module>
 		<module>persistence-json</module>
+		<module>persistence-mapdb</module>
+		<module>persistence-rocksdb</module>
 	</modules>
 
 	<properties>
@@ -49,7 +50,7 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-
+		<!-- commons-core -->
 		<dependency>
 			<groupId>io.ffreedom</groupId>
 			<artifactId>commons-core</artifactId>
@@ -61,7 +62,7 @@
 			<dependency>
 				<groupId>io.ffreedom</groupId>
 				<artifactId>commons-core</artifactId>
-				<version>${project.version}</version>
+				<version>${commons.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.netty</groupId>
