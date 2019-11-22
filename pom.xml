@@ -20,6 +20,7 @@
 		<module>persistence-json</module>
 		<module>persistence-mapdb</module>
 		<module>persistence-rocksdb</module>
+		<module>persistence-sqlite</module>
 	</modules>
 
 	<properties>
