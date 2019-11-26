@@ -7,12 +7,12 @@ import java.util.function.ObjIntConsumer;
 
 import org.slf4j.Logger;
 
-import io.ffreedom.common.env.SystemPropertys;
+import io.ffreedom.common.env.SysPropertys;
 import io.ffreedom.common.log.CommonLoggerFactory;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
-public abstract class ChronicleDataQueue<T, R extends DataReader<T>, W extends DataWriter<T>> {
+public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends DataWriter<T>> {
 
 	private final File savePath;
 	private String name;
@@ -26,7 +26,7 @@ public abstract class ChronicleDataQueue<T, R extends DataReader<T>, W extends D
 
 	protected Logger logger;
 
-	protected ChronicleDataQueue(BaseBuilder<?> builder) {
+	protected BaseChronicleQueue(BaseBuilder<?> builder) {
 		this.rootPath = builder.rootPath;
 		this.folder = builder.folder;
 		this.fileCycle = builder.fileCycle;
@@ -98,9 +98,9 @@ public abstract class ChronicleDataQueue<T, R extends DataReader<T>, W extends D
 
 	protected abstract static class BaseBuilder<B extends BaseBuilder<B>> {
 
-		private String rootPath = SystemPropertys.JAVA_IO_TMPDIR + "/";
+		private String rootPath = SysPropertys.JAVA_IO_TMPDIR + "/";
 		private String folder = "default/";
-		private Logger logger = CommonLoggerFactory.getLogger(ChronicleDataQueue.class);
+		private Logger logger = CommonLoggerFactory.getLogger(BaseChronicleQueue.class);
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
 		private ObjIntConsumer<File> storeFileListener = null;
 

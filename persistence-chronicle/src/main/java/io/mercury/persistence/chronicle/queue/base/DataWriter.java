@@ -7,6 +7,8 @@ public abstract class DataWriter<T> {
 
 	protected ExcerptAppender appender;
 
+	private String writerName;
+
 	protected DataWriter(ExcerptAppender appender) {
 		this.appender = appender;
 	}
@@ -15,12 +17,16 @@ public abstract class DataWriter<T> {
 		return appender;
 	}
 
-	public int currentCycle() {
+	public int cycle() {
 		return appender.cycle();
 	}
 
 	public int sourceId() {
 		return appender.sourceId();
+	}
+
+	public String writerName() {
+		return writerName;
 	}
 
 	/**

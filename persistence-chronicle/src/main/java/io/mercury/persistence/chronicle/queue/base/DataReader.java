@@ -10,6 +10,8 @@ public abstract class DataReader<T> {
 
 	private FileCycle fileCycle;
 
+	private String readerName;
+
 	protected DataReader(ExcerptTailer tailer, FileCycle fileCycle) {
 		super();
 		this.tailer = tailer;
@@ -30,28 +32,32 @@ public abstract class DataReader<T> {
 		return tailer.moveToIndex(fileCycle.calculateIndex(epochSecond));
 	}
 
-	public void moveToStart() {
+	public void toStart() {
 		tailer.toStart();
 	}
 
-	public void moveToEnd() {
+	public void toEnd() {
 		tailer.toEnd();
 	}
 
-	public int currentCycle() {
+	public int cycle() {
 		return tailer.cycle();
 	}
 
-	public long currentEpochSecond() {
+	public long epochSecond() {
 		return (long) tailer.cycle() * fileCycle.getSeconds();
 	}
 
-	public long currentIndex() {
+	public long index() {
 		return tailer.index();
 	}
 
 	public TailerState state() {
 		return tailer.state();
+	}
+
+	public String readerName() {
+		return readerName;
 	}
 
 	/**

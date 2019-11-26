@@ -25,7 +25,11 @@ public final class BytesReader extends DataReader<ByteBuffer> {
 		// use heap memory
 		Bytes<ByteBuffer> bytes = Bytes.elasticByteBuffer();
 		tailer.readBytes(bytes);
-		return ByteBuffer.wrap(bytes.toByteArray());
+		// use direct memory
+		// bytes.toTemporaryDirectByteBuffer();
+		ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length());
+		bytes.copyTo(byteBuffer);
+		return byteBuffer;// ByteBuffer.wrap(bytes.toByteArray());
 	}
 
 }
