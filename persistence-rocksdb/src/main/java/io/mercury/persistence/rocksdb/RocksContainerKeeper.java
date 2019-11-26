@@ -1,16 +1,16 @@
 package io.mercury.persistence.rocksdb;
 
 import io.ffreedom.common.collections.customize.Keeper;
+import io.mercury.persistence.rocksdb.entity.RocksEntity;
 
-public class RocksContainerKeeper<K extends RocksKey, V extends RocksValue>
-		extends Keeper<String, RocksContainer<K, V>> {
+public class RocksContainerKeeper<T extends RocksEntity> extends Keeper<String, RocksContainer<T>> {
 
 	public RocksContainerKeeper() {
 		RocksStatic.loadLibrary();
 	}
 
 	@Override
-	protected RocksContainer<K, V> createWith(String k) {
+	protected RocksContainer<T> createWith(String k) {
 		// TODO Auto-generated method stub
 		return null;
 	}

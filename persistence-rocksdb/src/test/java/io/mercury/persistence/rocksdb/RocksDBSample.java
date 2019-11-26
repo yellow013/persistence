@@ -30,17 +30,20 @@ import org.rocksdb.WriteOptions;
 import org.rocksdb.util.SizeUnit;
 
 public class RocksDBSample {
+
 	static {
 		RocksDB.loadLibrary();
 	}
 
-	public static void main(final String[] args) {
-		if (args.length < 1) {
-			System.out.println("usage: RocksDBSample db_path");
-			System.exit(-1);
-		}
+	private static String dbPath = "/tmp/rocksdb/test";
 
-		final String db_path = args[0];
+	public static void main(final String[] args) {
+//		if (args.length < 1) {
+//			System.out.println("usage: RocksDBSample db_path");
+//			System.exit(-1);
+//		}
+
+		final String db_path = dbPath;//args[0];
 		final String db_path_not_found = db_path + "_not_found";
 
 		System.out.println("RocksDBSample");
@@ -94,27 +97,26 @@ public class RocksDBSample {
 			options.setRateLimiter(rateLimiter);
 
 			final BlockBasedTableConfig table_options = new BlockBasedTableConfig();
-			
+
 			table_options.
 			// TODO
 					setBlockCache(new LRUCache(512))
-					
-					//.setBlockCacheSize(64 * SizeUnit.KB)
-					//.setCacheNumShardBits(6)
+
+					// .setBlockCacheSize(64 * SizeUnit.KB)
+					// .setCacheNumShardBits(6)
 
 					.setFilterPolicy(bloomFilter).setBlockSizeDeviation(5).setBlockRestartInterval(10)
-					.setCacheIndexAndFilterBlocks(true)
-					.setBlockCacheCompressed(new LRUCache(512));
-					//.setBlockCacheCompressedSize(64 * SizeUnit.KB)
-					//.setBlockCacheCompressedNumShardBits(10);
+					.setCacheIndexAndFilterBlocks(true).setBlockCacheCompressed(new LRUCache(512));
+			// .setBlockCacheCompressedSize(64 * SizeUnit.KB)
+			// .setBlockCacheCompressedNumShardBits(10);
 
-			//assert (table_options.blockCacheSize() == 64 * SizeUnit.KB);
-			//assert (table_options.cacheNumShardBits() == 6);
+			// assert (table_options.blockCacheSize() == 64 * SizeUnit.KB);
+			// assert (table_options.cacheNumShardBits() == 6);
 			assert (table_options.blockSizeDeviation() == 5);
 			assert (table_options.blockRestartInterval() == 10);
 			assert (table_options.cacheIndexAndFilterBlocks() == true);
-			//assert (table_options.blockCacheCompressedSize() == 64 * SizeUnit.KB);
-			//assert (table_options.blockCacheCompressedNumShardBits() == 10);
+			// assert (table_options.blockCacheCompressedSize() == 64 * SizeUnit.KB);
+			// assert (table_options.blockCacheCompressedNumShardBits() == 10);
 
 			options.setTableFormatConfig(table_options);
 			assert (options.tableFactoryName().equals("BlockBasedTable"));

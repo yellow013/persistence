@@ -2,9 +2,11 @@ package io.mercury.persistence.rocksdb;
 
 import org.rocksdb.Options;
 
-public class RocksContainer<K extends RocksKey, V extends RocksValue> {
-	
-	
+import io.ffreedom.common.thread.ThreadUtil;
+import io.mercury.persistence.rocksdb.entity.RocksEntity;
+
+public class RocksContainer<T extends RocksEntity> {
+
 	static {
 		RocksStatic.loadLibrary();
 	}
@@ -13,11 +15,13 @@ public class RocksContainer<K extends RocksKey, V extends RocksValue> {
 
 		Options options = new Options();
 
+		Runtime.getRuntime().addShutdownHook(ThreadUtil.newThread(() -> options.close(), "RocksContainerCloseThread"));
+
 	}
 
-	public V get(K k) {
-		k.key();
+	public T get(byte[] key) {
 		
+
 		return null;
 	}
 

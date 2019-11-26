@@ -1,5 +1,11 @@
-package io.mercury.persistence.rocksdb;
+package io.mercury.persistence.rocksdb.entity;
 
-public interface RocksReversibleEntity extends RocksReversibleKey, RocksValue {
+public interface RocksReversibleEntity extends RocksEntity {
+
+	/**
+	 * 
+	 * @return RocksDB reverse key byte[]
+	 */
+	byte[] reverseKey();
 
 }
