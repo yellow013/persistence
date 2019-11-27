@@ -7,9 +7,10 @@ public abstract class DataWriter<T> {
 
 	protected ExcerptAppender appender;
 
-	private String writerName;
+	private String name;
 
-	protected DataWriter(ExcerptAppender appender) {
+	protected DataWriter(String name, ExcerptAppender appender) {
+		this.name = name;
 		this.appender = appender;
 	}
 
@@ -25,8 +26,8 @@ public abstract class DataWriter<T> {
 		return appender.sourceId();
 	}
 
-	public String writerName() {
-		return writerName;
+	public String name() {
+		return name;
 	}
 
 	/**

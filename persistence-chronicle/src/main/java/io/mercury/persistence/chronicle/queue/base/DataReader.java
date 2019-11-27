@@ -10,10 +10,10 @@ public abstract class DataReader<T> {
 
 	private FileCycle fileCycle;
 
-	private String readerName;
+	private String name;
 
-	protected DataReader(ExcerptTailer tailer, FileCycle fileCycle) {
-		super();
+	protected DataReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
+		this.name = name;
 		this.tailer = tailer;
 		this.fileCycle = fileCycle;
 	}
@@ -56,8 +56,8 @@ public abstract class DataReader<T> {
 		return tailer.state();
 	}
 
-	public String readerName() {
-		return readerName;
+	public String name() {
+		return name;
 	}
 
 	/**

@@ -17,13 +17,13 @@ public class ChronicleBytesQueue extends BaseChronicleQueue<ByteBuffer, BytesRea
 	}
 
 	@Override
-	public BytesReader createReader() {
-		return BytesReader.wrap(getQueue().createTailer(), getFileCycle());
+	public BytesReader createReader(String readerName) {
+		return BytesReader.wrap(readerName, getQueue().createTailer(), getFileCycle());
 	}
 
 	@Override
-	public BytesWriter acquireWriter() {
-		return BytesWriter.wrap(getQueue().acquireAppender());
+	public BytesWriter acquireWriter(String writerName) {
+		return BytesWriter.wrap(writerName, getQueue().acquireAppender());
 	}
 
 	public static class Builder extends BaseBuilder<Builder> {

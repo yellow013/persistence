@@ -9,12 +9,12 @@ import net.openhft.chronicle.queue.ExcerptTailer;
 @NotThreadSafe
 public final class StringReader extends DataReader<String> {
 
-	private StringReader(ExcerptTailer tailer, FileCycle fileCycle) {
-		super(tailer, fileCycle);
+	private StringReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
+		super(name, tailer, fileCycle);
 	}
 
-	public static StringReader wrap(ExcerptTailer tailer, FileCycle fileCycle) {
-		return new StringReader(tailer, fileCycle);
+	public static StringReader wrap(String name, ExcerptTailer tailer, FileCycle fileCycle) {
+		return new StringReader(name, tailer, fileCycle);
 	}
 
 	@Override

@@ -92,9 +92,17 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 		return false;
 	}
 
-	public abstract R createReader();
+	public R createReader() {
+		return createReader(name);
+	}
 
-	public abstract W acquireWriter();
+	public abstract R createReader(String readerName);
+
+	public W acquireWriter() {
+		return acquireWriter(name);
+	}
+
+	public abstract W acquireWriter(String writerName);
 
 	protected abstract static class BaseBuilder<B extends BaseBuilder<B>> {
 

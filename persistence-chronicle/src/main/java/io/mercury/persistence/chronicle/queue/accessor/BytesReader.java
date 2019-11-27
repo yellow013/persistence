@@ -12,12 +12,12 @@ import net.openhft.chronicle.queue.ExcerptTailer;
 @NotThreadSafe
 public final class BytesReader extends DataReader<ByteBuffer> {
 
-	private BytesReader(ExcerptTailer tailer, FileCycle fileCycle) {
-		super(tailer, fileCycle);
+	private BytesReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
+		super(name, tailer, fileCycle);
 	}
 
-	public static BytesReader wrap(ExcerptTailer tailer, FileCycle fileCycle) {
-		return new BytesReader(tailer, fileCycle);
+	public static BytesReader wrap(String name, ExcerptTailer tailer, FileCycle fileCycle) {
+		return new BytesReader(name, tailer, fileCycle);
 	}
 
 	@Override

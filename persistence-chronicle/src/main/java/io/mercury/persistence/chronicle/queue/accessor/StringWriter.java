@@ -8,12 +8,12 @@ import net.openhft.chronicle.queue.ExcerptAppender;
 @NotThreadSafe
 public final class StringWriter extends DataWriter<String> {
 
-	private StringWriter(ExcerptAppender appender) {
-		super(appender);
+	private StringWriter(String name, ExcerptAppender appender) {
+		super(name, appender);
 	}
 
-	public static StringWriter wrap(ExcerptAppender appender) {
-		return new StringWriter(appender);
+	public static StringWriter wrap(String name, ExcerptAppender appender) {
+		return new StringWriter(name, appender);
 	}
 
 	@Override

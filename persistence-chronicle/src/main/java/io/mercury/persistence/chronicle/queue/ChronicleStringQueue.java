@@ -17,13 +17,13 @@ public class ChronicleStringQueue extends BaseChronicleQueue<String, StringReade
 	}
 
 	@Override
-	public StringReader createReader() {
-		return StringReader.wrap(getQueue().createTailer(), getFileCycle());
+	public StringReader createReader(String readerName) {
+		return StringReader.wrap(readerName, getQueue().createTailer(), getFileCycle());
 	}
 
 	@Override
-	public StringWriter acquireWriter() {
-		return StringWriter.wrap(getQueue().acquireAppender());
+	public StringWriter acquireWriter(String writerName) {
+		return StringWriter.wrap(writerName, getQueue().acquireAppender());
 	}
 
 	public static class Builder extends BaseBuilder<Builder> {

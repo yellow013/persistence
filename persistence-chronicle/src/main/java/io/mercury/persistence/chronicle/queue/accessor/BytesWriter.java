@@ -11,12 +11,12 @@ import net.openhft.chronicle.queue.ExcerptAppender;
 @NotThreadSafe
 public final class BytesWriter extends DataWriter<ByteBuffer> {
 
-	private BytesWriter(ExcerptAppender appender) {
-		super(appender);
+	private BytesWriter(String name, ExcerptAppender appender) {
+		super(name, appender);
 	}
 
-	public static BytesWriter wrap(ExcerptAppender appender) {
-		return new BytesWriter(appender);
+	public static BytesWriter wrap(String name, ExcerptAppender appender) {
+		return new BytesWriter(name, appender);
 	}
 
 	@Override
