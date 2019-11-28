@@ -53,15 +53,19 @@
 		</dependency>
 		<!-- commons-core -->
 		<dependency>
-			<groupId>io.ffreedom</groupId>
+			<groupId>io.mercury</groupId>
 			<artifactId>commons-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
 		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>io.ffreedom</groupId>
+				<groupId>io.mercury</groupId>
 				<artifactId>commons-core</artifactId>
 				<version>${commons.version}</version>
 			</dependency>
@@ -69,6 +73,16 @@
 				<groupId>io.netty</groupId>
 				<artifactId>netty-buffer</artifactId>
 				<version>4.1.43.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.19</version>
+			</dependency>
+			<dependency>
+				<groupId>org.lz4</groupId>
+				<artifactId>lz4-java</artifactId>
+				<version>1.6.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

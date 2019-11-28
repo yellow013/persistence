@@ -3,7 +3,7 @@ package io.mercury.persistence.avro.serializable;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.slf4j.Logger;
 
-import io.ffreedom.common.log.CommonLoggerFactory;
+import io.mercury.common.log.CommonLoggerFactory;
 
 public abstract class BaseAvroDeserializer<T> {
 

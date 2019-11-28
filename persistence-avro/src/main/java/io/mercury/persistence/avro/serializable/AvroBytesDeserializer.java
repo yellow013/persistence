@@ -15,7 +15,7 @@ import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecord;
 
-import io.ffreedom.common.serialization.BytesDeserializer;
+import io.mercury.common.serialization.BytesDeserializer;
 
 @NotThreadSafe
 public final class AvroBytesDeserializer<T extends SpecificRecord> extends BaseAvroDeserializer<T>

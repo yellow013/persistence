@@ -2,7 +2,7 @@ package io.mercury.persistence.chronicle.queue.base;
 
 import java.time.Instant;
 
-import io.ffreedom.common.datetime.TimeConstants;
+import io.mercury.common.datetime.TimeConstants;
 import net.openhft.chronicle.queue.RollCycle;
 import net.openhft.chronicle.queue.RollCycles;
 

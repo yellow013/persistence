@@ -2,7 +2,7 @@ package io.mercury.persistence.rocksdb;
 
 import org.rocksdb.Options;
 
-import io.ffreedom.common.thread.ThreadUtil;
+import io.mercury.common.thread.ThreadUtil;
 import io.mercury.persistence.rocksdb.entity.RocksEntity;
 
 public class RocksContainer<T extends RocksEntity> {

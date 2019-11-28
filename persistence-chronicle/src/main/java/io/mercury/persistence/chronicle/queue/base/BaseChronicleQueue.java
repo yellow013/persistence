@@ -1,14 +1,14 @@
 package io.mercury.persistence.chronicle.queue.base;
 
-import static io.ffreedom.common.utils.StringUtil.isPath;
+import static io.mercury.common.utils.StringUtil.isPath;
 
 import java.io.File;
 import java.util.function.ObjIntConsumer;
 
 import org.slf4j.Logger;
 
-import io.ffreedom.common.env.SysPropertys;
-import io.ffreedom.common.log.CommonLoggerFactory;
+import io.mercury.common.env.SysPropertys;
+import io.mercury.common.log.CommonLoggerFactory;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 

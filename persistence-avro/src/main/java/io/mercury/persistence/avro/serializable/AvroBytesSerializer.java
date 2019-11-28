@@ -8,7 +8,7 @@ import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificRecord;
 
-import io.ffreedom.common.serialization.BytesSerializer;
+import io.mercury.common.serialization.BytesSerializer;
 
 @NotThreadSafe
 public final class AvroBytesSerializer extends BaseAvroSerializer implements BytesSerializer<SpecificRecord> {

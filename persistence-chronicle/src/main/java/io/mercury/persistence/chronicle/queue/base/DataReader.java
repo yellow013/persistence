@@ -1,6 +1,6 @@
 package io.mercury.persistence.chronicle.queue.base;
 
-import io.ffreedom.common.annotations.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import net.openhft.chronicle.queue.ExcerptTailer;
 import net.openhft.chronicle.queue.TailerState;
 

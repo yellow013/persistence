@@ -1,6 +1,6 @@
 package io.mercury.persistence.chronicle.queue;
 
-import io.ffreedom.common.number.RandomNumber;
+import io.mercury.common.number.RandomNumber;
 import io.mercury.persistence.chronicle.queue.accessor.StringReader;
 import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
 import io.mercury.persistence.chronicle.queue.base.BaseChronicleQueue;

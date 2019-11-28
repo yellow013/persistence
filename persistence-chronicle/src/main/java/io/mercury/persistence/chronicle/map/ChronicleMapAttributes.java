@@ -1,8 +1,8 @@
 package io.mercury.persistence.chronicle.map;
 
-import static io.ffreedom.common.utils.StringUtil.isPath;
+import static io.mercury.common.utils.StringUtil.isPath;
 
-import io.ffreedom.common.env.SysPropertys;
+import io.mercury.common.env.SysPropertys;
 
 public final class ChronicleMapAttributes<K, V> {
 

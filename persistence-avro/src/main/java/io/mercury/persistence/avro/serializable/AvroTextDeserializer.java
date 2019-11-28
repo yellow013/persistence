@@ -12,7 +12,7 @@ import org.apache.avro.io.JsonDecoder;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificRecord;
 
-import io.ffreedom.common.serialization.TextDeserializer;
+import io.mercury.common.serialization.TextDeserializer;
 
 @NotThreadSafe
 public final class AvroTextDeserializer<T extends SpecificRecord> extends BaseAvroDeserializer<T>

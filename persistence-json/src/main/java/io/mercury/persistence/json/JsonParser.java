@@ -13,10 +13,10 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.ImmutableMap;
 import org.eclipse.collections.api.map.MutableMap;
 
-import io.ffreedom.common.collections.ImmutableLists;
-import io.ffreedom.common.collections.ImmutableMaps;
-import io.ffreedom.common.collections.MutableLists;
-import io.ffreedom.common.collections.MutableMaps;
+import io.mercury.common.collections.ImmutableLists;
+import io.mercury.common.collections.ImmutableMaps;
+import io.mercury.common.collections.MutableLists;
+import io.mercury.common.collections.MutableMaps;
 
 public final class JsonParser {
 

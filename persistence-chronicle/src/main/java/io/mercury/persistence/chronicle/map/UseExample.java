@@ -1,7 +1,7 @@
 package io.mercury.persistence.chronicle.map;
 
-import io.ffreedom.common.env.SysPropertys;
-import io.ffreedom.common.thread.ThreadUtil;
+import io.mercury.common.env.SysPropertys;
+import io.mercury.common.thread.ThreadUtil;
 import net.openhft.chronicle.map.ChronicleMap;
 
 public class UseExample {

@@ -6,7 +6,7 @@ import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 
-import io.ffreedom.common.log.CommonLoggerFactory;
+import io.mercury.common.log.CommonLoggerFactory;
 
 public abstract class BaseAvroSerializer {
 
