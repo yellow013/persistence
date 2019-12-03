@@ -18,12 +18,12 @@ public class ChronicleBytesQueue extends BaseChronicleQueue<ByteBuffer, BytesRea
 
 	@Override
 	public BytesReader createReader(String readerName) {
-		return BytesReader.wrap(readerName, getQueue().createTailer(), getFileCycle());
+		return BytesReader.wrap(readerName, internalQueue().createTailer(), fileCycle());
 	}
 
 	@Override
 	public BytesWriter acquireWriter(String writerName) {
-		return BytesWriter.wrap(writerName, getQueue().acquireAppender());
+		return BytesWriter.wrap(writerName, internalQueue().acquireAppender());
 	}
 
 	public static class Builder extends BaseBuilder<Builder> {

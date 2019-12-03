@@ -10,7 +10,6 @@ public final class ChronicleMapAttributes<K, V> {
 	private Class<V> valueClass;
 	private K averageKey;
 	private V averageValue;
-	private String savePath;
 
 	private boolean putReturnsNull = false;
 	private boolean removeReturnsNull = false;
@@ -19,8 +18,10 @@ public final class ChronicleMapAttributes<K, V> {
 
 	private long entries = 32 << 16;
 	private int actualChunkSize;
+
 	private String rootPath;
 	private String folder;
+	private String savePath;
 
 	private ChronicleMapAttributes(Class<K> keyClass, Class<V> valueClass, String rootPath, String folder) {
 		this.keyClass = keyClass;
@@ -48,94 +49,94 @@ public final class ChronicleMapAttributes<K, V> {
 		return new ChronicleMapAttributes<>(keyClass, valueClass, rootPath, folder);
 	}
 
-	public Class<K> getKeyClass() {
+	public Class<K> keyClass() {
 		return keyClass;
 	}
 
-	public Class<V> getValueClass() {
+	public Class<V> valueClass() {
 		return valueClass;
 	}
 
-	public K getAverageKey() {
+	public K averageKey() {
 		return averageKey;
 	}
 
-	public V getAverageValue() {
+	public V averageValue() {
 		return averageValue;
 	}
 
-	public String getSavePath() {
-		return savePath;
-	}
-
-	public boolean isPutReturnsNull() {
+	public boolean putReturnsNull() {
 		return putReturnsNull;
 	}
 
-	public boolean isRemoveReturnsNull() {
+	public boolean removeReturnsNull() {
 		return removeReturnsNull;
 	}
 
-	public boolean isRecover() {
+	public boolean recover() {
 		return recover;
 	}
 
-	public boolean isPersistent() {
+	public boolean persistent() {
 		return persistent;
 	}
 
-	public int getActualChunkSize() {
+	public int actualChunkSize() {
 		return actualChunkSize;
 	}
 
-	public long getEntries() {
+	public long entries() {
 		return entries;
 	}
 
-	public String getRootPath() {
+	public String rootPath() {
 		return rootPath;
 	}
 
-	public String getFolder() {
+	public String folder() {
 		return folder;
 	}
 
-	public ChronicleMapAttributes<K, V> setActualChunkSize(int actualChunkSize) {
+	public String savePath() {
+		return savePath;
+	}
+
+	public ChronicleMapAttributes<K, V> actualChunkSize(int actualChunkSize) {
 		this.actualChunkSize = actualChunkSize;
 		return this;
 	}
 
-	public ChronicleMapAttributes<K, V> setEntries(long entries) {
+	public ChronicleMapAttributes<K, V> entries(long entries) {
 		this.entries = entries;
 		return this;
 	}
 
-	public ChronicleMapAttributes<K, V> setAverageKey(K averageKey) {
+	public ChronicleMapAttributes<K, V> averageKey(K averageKey) {
 		this.averageKey = averageKey;
 		return this;
 	}
 
-	public ChronicleMapAttributes<K, V> setAverageValue(V averageValue) {
+	public ChronicleMapAttributes<K, V> averageValue(V averageValue) {
 		this.averageValue = averageValue;
 		return this;
 	}
 
-	public ChronicleMapAttributes<K, V> setPutReturnsNull(boolean putReturnsNull) {
+	public ChronicleMapAttributes<K, V> putReturnsNull(boolean putReturnsNull) {
 		this.putReturnsNull = putReturnsNull;
 		return this;
 	}
 
-	public ChronicleMapAttributes<K, V> setRemoveReturnsNull(boolean removeReturnsNull) {
+	public ChronicleMapAttributes<K, V> removeReturnsNull(boolean removeReturnsNull) {
 		this.removeReturnsNull = removeReturnsNull;
 		return this;
 	}
 
-	public ChronicleMapAttributes<K, V> setRecover(boolean recover) {
+	public ChronicleMapAttributes<K, V> recover(boolean recover) {
 		this.recover = recover;
 		return this;
 	}
 
-	public ChronicleMapAttributes<K, V> setPersistent(boolean persistent) {
+	public ChronicleMapAttributes<K, V> persistent(boolean persistent) {
 		this.persistent = persistent;
 		return this;
 	}

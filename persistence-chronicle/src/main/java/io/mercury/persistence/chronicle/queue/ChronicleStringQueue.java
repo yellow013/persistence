@@ -18,12 +18,12 @@ public class ChronicleStringQueue extends BaseChronicleQueue<String, StringReade
 
 	@Override
 	public StringReader createReader(String readerName) {
-		return StringReader.wrap(readerName, getQueue().createTailer(), getFileCycle());
+		return StringReader.wrap(readerName, internalQueue().createTailer(), fileCycle());
 	}
 
 	@Override
 	public StringWriter acquireWriter(String writerName) {
-		return StringWriter.wrap(writerName, getQueue().acquireAppender());
+		return StringWriter.wrap(writerName, internalQueue().acquireAppender());
 	}
 
 	public static class Builder extends BaseBuilder<Builder> {
@@ -40,7 +40,7 @@ public class ChronicleStringQueue extends BaseChronicleQueue<String, StringReade
 	}
 
 	public static void main(String[] args) {
-		ChronicleStringQueue dataPersistence = ChronicleStringQueue.newBuilder().setFileCycle(FileCycle.HOURLY).build();
+		ChronicleStringQueue dataPersistence = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.HOURLY).build();
 		StringWriter queueWriter = dataPersistence.acquireWriter();
 		StringReader queueReader = dataPersistence.createReader();
 		new Thread(() -> {

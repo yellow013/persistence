@@ -1,4 +1,4 @@
-package io.nagoya.persistence.chronicle;
+package io.mercury.persistence.chronicle;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -14,7 +14,7 @@ public class ChronicleStringQueueTest {
 
 	@Test
 	public void test0() {
-		ChronicleStringQueue persistence = ChronicleStringQueue.newBuilder().setFileCycle(FileCycle.MINUTELY).build();
+		ChronicleStringQueue persistence = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();
 		StringWriter writer = persistence.acquireWriter();
 		StringReader reader = persistence.createReader();
 

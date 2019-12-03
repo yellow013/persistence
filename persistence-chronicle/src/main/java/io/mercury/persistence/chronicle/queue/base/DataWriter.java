@@ -36,7 +36,7 @@ public abstract class DataWriter<T> {
 	 * @param t
 	 * @throws ChronicleWriteException
 	 */
-	@MayThrowsRuntimeException
+	@MayThrowsRuntimeException(ChronicleWriteException.class)
 	public void append(T t) throws ChronicleWriteException {
 		try {
 			append0(t);

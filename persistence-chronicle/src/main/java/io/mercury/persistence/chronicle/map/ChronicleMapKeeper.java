@@ -22,25 +22,25 @@ public class ChronicleMapKeeper<K, V> extends Keeper<String, ChronicleMap<K, V>>
 		this.attributes = attributes;
 	}
 
-	@MayThrowsRuntimeException
+	@MayThrowsRuntimeException(ChronicleIOException.class)
 	@Override
 	public ChronicleMap<K, V> acquire(String filename) throws ChronicleIOException {
 		return super.acquire(filename);
 	}
 
 	@Override
-	protected ChronicleMap<K, V> createWith(String filename) {
-		ChronicleMapBuilder<K, V> builder = ChronicleMapBuilder.of(attributes.getKeyClass(), attributes.getValueClass())
-				.putReturnsNull(attributes.isPutReturnsNull()).removeReturnsNull(attributes.isRemoveReturnsNull())
-				.entries(attributes.getEntries());
-		if (attributes.getActualChunkSize() > 0)
-			builder.actualChunkSize(attributes.getActualChunkSize());
-		if (attributes.getAverageKey() != null)
-			builder.averageKey(attributes.getAverageKey());
-		if (attributes.getAverageValue() != null)
-			builder.averageValue(attributes.getAverageValue());
-		if (attributes.isPersistent()) {
-			File persistedFile = new File(attributes.getSavePath(), filename);
+	protected ChronicleMap<K, V> createWithKey(String filename) {
+		ChronicleMapBuilder<K, V> builder = ChronicleMapBuilder.of(attributes.keyClass(), attributes.valueClass())
+				.putReturnsNull(attributes.putReturnsNull()).removeReturnsNull(attributes.removeReturnsNull())
+				.entries(attributes.entries());
+		if (attributes.actualChunkSize() > 0)
+			builder.actualChunkSize(attributes.actualChunkSize());
+		if (attributes.averageKey() != null)
+			builder.averageKey(attributes.averageKey());
+		if (attributes.averageValue() != null)
+			builder.averageValue(attributes.averageValue());
+		if (attributes.persistent()) {
+			File persistedFile = new File(attributes.savePath(), filename);
 			try {
 				if (!persistedFile.exists()) {
 					File parentFile = persistedFile.getParentFile();
@@ -48,7 +48,7 @@ public class ChronicleMapKeeper<K, V> extends Keeper<String, ChronicleMap<K, V>>
 						parentFile.mkdirs();
 					return builder.createPersistedTo(persistedFile);
 				} else {
-					if (attributes.isRecover())
+					if (attributes.recover())
 						return builder.createOrRecoverPersistedTo(persistedFile);
 					else
 						return builder.createPersistedTo(persistedFile);

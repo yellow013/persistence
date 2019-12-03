@@ -66,7 +66,7 @@ public abstract class DataReader<T> {
 	 * @return
 	 * @throws ChronicleReadException
 	 */
-	@MayThrowsRuntimeException
+	@MayThrowsRuntimeException(ChronicleReadException.class)
 	public T next() throws ChronicleReadException {
 		try {
 			return next0();

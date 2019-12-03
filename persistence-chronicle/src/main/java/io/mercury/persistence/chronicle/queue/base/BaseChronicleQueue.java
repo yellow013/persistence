@@ -17,7 +17,7 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 	private final File savePath;
 	private String name;
 
-	private SingleChronicleQueue queue;
+	private SingleChronicleQueue internalQueue;
 
 	private String rootPath;
 	private String folder;
@@ -42,7 +42,7 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 	private void initChronicleQueue() {
 		if (!savePath.exists())
 			savePath.mkdirs();
-		this.queue = SingleChronicleQueueBuilder.single(savePath).rollCycle(fileCycle.getRollCycle())
+		this.internalQueue = SingleChronicleQueueBuilder.single(savePath).rollCycle(fileCycle.getRollCycle())
 				.storeFileListener(this::storeFileHandle).build();
 		// TODO 解决CPU缓存行填充问题
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownHandle, "ChronicleQueue-Cleanup"));
@@ -50,7 +50,7 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 	}
 
 	private void shutdownHandle() {
-		queue.close();
+		internalQueue.close();
 		logger.info("Run ShutdownHook of {}", name);
 	}
 
@@ -61,28 +61,28 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 			logger.info("Released file : cycle==[{}], file==[{}]", cycle, file.getAbsolutePath());
 	}
 
-	public String getName() {
+	public String name() {
 		return name;
 	}
 
-	public String getRootPath() {
+	public String rootPath() {
 		return rootPath;
 	}
 
-	public String getFolder() {
+	public String folder() {
 		return folder;
 	}
 
-	public File getSavePath() {
+	public File savePath() {
 		return savePath;
 	}
 
-	public FileCycle getFileCycle() {
+	public FileCycle fileCycle() {
 		return fileCycle;
 	}
 
-	public SingleChronicleQueue getQueue() {
-		return queue;
+	public SingleChronicleQueue internalQueue() {
+		return internalQueue;
 	}
 
 	@Deprecated
@@ -112,27 +112,27 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
 		private ObjIntConsumer<File> storeFileListener = null;
 
-		public B setRootPath(String rootPath) {
+		public B rootPath(String rootPath) {
 			this.rootPath = isPath(rootPath) ? rootPath : rootPath + "/";
 			return getThis();
 		}
 
-		public B setFolder(String folder) {
+		public B folder(String folder) {
 			this.folder = isPath(folder) ? folder : folder + "/";
 			return getThis();
 		}
 
-		public B setLogger(Logger logger) {
+		public B logger(Logger logger) {
 			this.logger = logger;
 			return getThis();
 		}
 
-		public B setFileCycle(FileCycle fileCycle) {
+		public B fileCycle(FileCycle fileCycle) {
 			this.fileCycle = fileCycle;
 			return getThis();
 		}
 
-		public B setStoreFileListener(ObjIntConsumer<File> storeFileListener) {
+		public B storeFileListener(ObjIntConsumer<File> storeFileListener) {
 			this.storeFileListener = storeFileListener;
 			return getThis();
 		}

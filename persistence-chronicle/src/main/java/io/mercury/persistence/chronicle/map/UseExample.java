@@ -10,7 +10,7 @@ public class UseExample {
 
 		ChronicleMapAttributes<String, byte[]> attributes = ChronicleMapAttributes
 				.buildOf(String.class, byte[].class, SysPropertys.USER_HOME, "betting")
-				.setAverageKey("uuid__game__merOrderId______").setAverageValue(new byte[128]);
+				.averageKey("uuid__game__merOrderId______").averageValue(new byte[128]);
 
 		ChronicleMapKeeperOfLocalDate<String, byte[]> mapKeeper = new ChronicleMapKeeperOfLocalDate<>(attributes);
 

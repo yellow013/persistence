@@ -12,7 +12,7 @@ public final class ChronicleMapKeeperOfLocalDate<K, V> extends ChronicleMapKeepe
 		super(attributes);
 	}
 
-	@MayThrowsRuntimeException
+	@MayThrowsRuntimeException(ChronicleIOException.class)
 	public ChronicleMap<K, V> acquire(LocalDate date) throws ChronicleIOException {
 		return super.acquire(String.valueOf(DateTimeUtil.date(date)));
 	}
