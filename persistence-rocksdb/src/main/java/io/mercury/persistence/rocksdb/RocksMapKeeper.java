@@ -1,16 +1,18 @@
 package io.mercury.persistence.rocksdb;
 
 import io.mercury.common.collections.customize.Keeper;
-import io.mercury.persistence.rocksdb.entity.RocksEntity;
+import io.mercury.persistence.rocksdb.map.RocksMap;
+import io.mercury.persistence.rocksdb.map.entity.RocksKey;
+import io.mercury.persistence.rocksdb.map.entity.RocksValue;
 
-public class RocksContainerKeeper<T extends RocksEntity> extends Keeper<String, RocksContainer<T>> {
+public class RocksMapKeeper<K extends RocksKey, V extends RocksValue> extends Keeper<String, RocksMap<K, V>> {
 
-	public RocksContainerKeeper() {
+	public RocksMapKeeper() {
 		RocksStatic.loadLibrary();
 	}
 
 	@Override
-	protected RocksContainer<T> createWith(String k) {
+	protected RocksMap<K, V> createWithKey(String k) {
 		// TODO Auto-generated method stub
 		return null;
 	}

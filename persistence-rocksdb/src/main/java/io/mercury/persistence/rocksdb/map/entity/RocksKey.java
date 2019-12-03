@@ -1,8 +1,8 @@
-package io.mercury.persistence.rocksdb.entity;
+package io.mercury.persistence.rocksdb.map.entity;
 
 import javax.annotation.Nonnull;
 
-public interface RocksEntity extends RocksValue{
+public interface RocksKey {
 
 	/**
 	 * 
@@ -12,11 +12,13 @@ public interface RocksEntity extends RocksValue{
 
 	/**
 	 * 
-	 * @return RocksDB key byte[]
+	 * @return RocksDB primary key byte[]
 	 */
 	@Nonnull
 	byte[] key();
 
-	int keyLength();
+	default int length() {
+		return key().length;
+	}
 
 }

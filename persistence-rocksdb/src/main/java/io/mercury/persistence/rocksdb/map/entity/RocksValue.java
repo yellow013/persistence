@@ -1,4 +1,4 @@
-package io.mercury.persistence.rocksdb.entity;
+package io.mercury.persistence.rocksdb.map.entity;
 
 import javax.annotation.Nonnull;
 
@@ -13,12 +13,12 @@ public interface RocksValue {
 	 */
 	@Nonnull
 	default ByteBuf value() {
-		return value(Unpooled.buffer(valueLength()));
+		return value(Unpooled.buffer(valueSize()));
 	}
 
 	@Nonnull
 	ByteBuf value(@Nonnull ByteBuf useBuf);
 
-	int valueLength();
+	int valueSize();
 
 }

@@ -34,8 +34,7 @@ public final class JsonWrapper {
 
 		System.out.println(toJson(map));
 		System.out.println(toJsonHasNulls(map));
-		
-		
+
 		System.out.println(JSON.toJSONString(map));
 
 	}
