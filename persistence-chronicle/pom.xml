@@ -15,9 +15,9 @@
 
 	<properties>
 		<!-- chronicle-queue last version : 5.17.25 -->
-		<chronicle-queue.version>5.17.26</chronicle-queue.version>
+		<chronicle-queue.version>5.17.28</chronicle-queue.version>
 		<!-- chronicle-map last version : 3.17.6 -->
-		<chronicle-map.version>3.17.6</chronicle-map.version>
+		<chronicle-map.version>3.17.7</chronicle-map.version>
 	</properties>
 
 	<dependencies>
@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna-platform</artifactId>
-			<version>5.4.0</version>
+			<version>5.5.0</version>
 		</dependency>
 
 		<!-- chronicle-map off-heap and high performance map framework -->

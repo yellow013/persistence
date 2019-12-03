@@ -15,6 +15,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>persistence-dsl</module>
 		<module>persistence-avro</module>
 		<module>persistence-chronicle</module>
 		<module>persistence-json</module>
