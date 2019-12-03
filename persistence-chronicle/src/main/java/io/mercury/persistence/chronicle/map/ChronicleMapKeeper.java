@@ -7,12 +7,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
-import io.mercury.common.collections.customize.Keeper;
+import io.mercury.common.collections.customize.BaseKeeper;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
 
 @ThreadSafe
-public class ChronicleMapKeeper<K, V> extends Keeper<String, ChronicleMap<K, V>> {
+public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K, V>> {
 
 	private ChronicleMapAttributes<K, V> attributes;
 
