@@ -1,25 +1,25 @@
-package io.mercury.persistence.rocksdb;
+package io.mercury.persistence.rocksdb.exception;
 
-public final class RocksDBRuntimeException extends RuntimeException {
+public final class RocksRuntimeException extends RuntimeException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6940482392634006619L;
 
-	public RocksDBRuntimeException() {
+	public RocksRuntimeException() {
 		super();
 	}
 
-	public RocksDBRuntimeException(String message) {
+	public RocksRuntimeException(String message) {
 		super(message);
 	}
 
-	public RocksDBRuntimeException(Throwable throwable) {
+	public RocksRuntimeException(Throwable throwable) {
 		super(throwable);
 	}
 
-	public RocksDBRuntimeException(String message, Throwable throwable) {
+	public RocksRuntimeException(String message, Throwable throwable) {
 		super(message, throwable);
 	}
 
