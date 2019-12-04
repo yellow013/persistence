@@ -2,7 +2,7 @@ package io.mercury.persistence.chronicle.map;
 
 import static io.mercury.common.utils.StringUtil.isPath;
 
-import io.mercury.common.env.SysPropertys;
+import io.mercury.common.sys.SysProperties;
 
 public final class ChronicleMapAttributes<K, V> {
 
@@ -37,7 +37,7 @@ public final class ChronicleMapAttributes<K, V> {
 		this.savePath = rootPath + ChronicleMapFolder + folder;
 	}
 
-	private static final String DefaultRootPath = SysPropertys.JAVA_IO_TMPDIR + "/";
+	private static final String DefaultRootPath = SysProperties.JAVA_IO_TMPDIR + "/";
 	private static final String DefaultFolder = "default/";
 
 	public static <K, V> ChronicleMapAttributes<K, V> buildOf(Class<K> keyClass, Class<V> valueClass) {

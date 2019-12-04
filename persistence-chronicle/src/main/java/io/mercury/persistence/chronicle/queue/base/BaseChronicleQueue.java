@@ -7,8 +7,8 @@ import java.util.function.ObjIntConsumer;
 
 import org.slf4j.Logger;
 
-import io.mercury.common.env.SysPropertys;
 import io.mercury.common.log.CommonLoggerFactory;
+import io.mercury.common.sys.SysProperties;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
@@ -106,7 +106,7 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 
 	protected abstract static class BaseBuilder<B extends BaseBuilder<B>> {
 
-		private String rootPath = SysPropertys.JAVA_IO_TMPDIR + "/";
+		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
 		private String folder = "default/";
 		private Logger logger = CommonLoggerFactory.getLogger(BaseChronicleQueue.class);
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
