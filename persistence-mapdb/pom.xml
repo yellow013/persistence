@@ -18,9 +18,7 @@
 			<groupId>org.mapdb</groupId>
 			<artifactId>mapdb</artifactId>
 			<version>3.0.7</version>
-		
 		</dependency>
-		
-		
 	</dependencies>
+	
 </project>
