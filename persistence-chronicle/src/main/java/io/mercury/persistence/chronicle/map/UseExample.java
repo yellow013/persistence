@@ -8,19 +8,18 @@ public class UseExample {
 
 	public static void main(String[] args) {
 
-		ChronicleMapAttributes<String, byte[]> attributes = ChronicleMapAttributes
-				.buildOf(String.class, byte[].class, SysProperties.USER_HOME, "betting")
-				.averageKey("uuid__game__merOrderId______").averageValue(new byte[128]);
+		ChronicleMapOptions<String, byte[]> options = ChronicleMapOptions
+				.builder(String.class, byte[].class, SysProperties.USER_HOME, "betting")
+				.averageKey("uuid__game__merOrderId______").averageValue(new byte[128]).build();
 
-		ChronicleMapKeeperOfLocalDate<String, byte[]> mapKeeper = new ChronicleMapKeeperOfLocalDate<>(attributes);
+		ChronicleMapKeeperOfLocalDate<String, byte[]> mapKeeper = new ChronicleMapKeeperOfLocalDate<>(options);
 
 		ChronicleMap<String, byte[]> acquire = mapKeeper.acquire("2019.10.11");
-		
+
 		while (true) {
 			System.out.println(acquire.size());
 			ThreadUtil.sleep(2000);
 		}
-
 
 	}
 }

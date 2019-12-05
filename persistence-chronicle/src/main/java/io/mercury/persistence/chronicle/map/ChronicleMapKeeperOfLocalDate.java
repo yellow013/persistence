@@ -8,8 +8,8 @@ import net.openhft.chronicle.map.ChronicleMap;
 
 public final class ChronicleMapKeeperOfLocalDate<K, V> extends ChronicleMapKeeper<K, V> {
 
-	public ChronicleMapKeeperOfLocalDate(ChronicleMapAttributes<K, V> attributes) {
-		super(attributes);
+	public ChronicleMapKeeperOfLocalDate(ChronicleMapOptions<K, V> options) {
+		super(options);
 	}
 
 	@MayThrowsRuntimeException(ChronicleIOException.class)
