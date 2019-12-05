@@ -3,15 +3,12 @@ package io.mercury.persistence.rocksdb.map;
 import org.rocksdb.Options;
 
 import io.mercury.common.thread.ThreadUtil;
-import io.mercury.persistence.rocksdb.RocksStatic;
 import io.mercury.persistence.rocksdb.map.entity.RocksReversibleKey;
 import io.mercury.persistence.rocksdb.map.entity.RocksValue;
 
 public class RocksReversibleMap<K extends RocksReversibleKey, V extends RocksValue> {
 
-	static {
-		RocksStatic.loadLibrary();
-	}
+	
 
 	public static void main(String[] args) {
 

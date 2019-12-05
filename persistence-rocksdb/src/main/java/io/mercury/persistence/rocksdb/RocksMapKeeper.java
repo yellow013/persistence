@@ -7,10 +7,6 @@ import io.mercury.persistence.rocksdb.map.entity.RocksValue;
 
 public class RocksMapKeeper<K extends RocksKey, V extends RocksValue> extends BaseKeeper<String, RocksMap<K, V>> {
 
-	public RocksMapKeeper() {
-		RocksStatic.loadLibrary();
-	}
-
 	@Override
 	protected RocksMap<K, V> createWithKey(String k) {
 		// TODO Auto-generated method stub

@@ -16,10 +16,6 @@ import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.RocksIterator;
 
-/**
- * Hello world!
- *
- */
 public class UseExample {
 
 	private static final String dbPath = "/tmp/rocksdb/data/";
@@ -85,7 +81,6 @@ public class UseExample {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void testCertainColumnFamily() throws RocksDBException {
 		String table = "CertainColumnFamilyTest";
 		String key = "certainKey";
@@ -111,7 +106,7 @@ public class UseExample {
 
 		rocksDB = RocksDB.open(dbOptions, dbPath, columnFamilyDescriptors, columnFamilyHandles);
 		for (int i = 0; i < columnFamilyDescriptors.size(); i++) {
-			if (new String(columnFamilyDescriptors.get(i).columnFamilyName()).equals(table)) {
+			if (new String(columnFamilyDescriptors.get(i).getName()).equals(table)) {
 				rocksDB.dropColumnFamily(columnFamilyHandles.get(i));
 			}
 		}
@@ -133,6 +128,7 @@ public class UseExample {
 		handleList.add(columnFamilyHandle);
 		handleList.add(columnFamilyHandle);
 
+		@SuppressWarnings("deprecation")
 		Map<byte[], byte[]> multiGet = rocksDB.multiGet(handleList, keys);
 		for (Map.Entry<byte[], byte[]> entry : multiGet.entrySet()) {
 			System.out.println(new String(entry.getKey()) + "--" + new String(entry.getValue()));
@@ -149,7 +145,7 @@ public class UseExample {
 	public static void main(String[] args) throws Exception {
 		UseExample test = new UseExample();
 		test.testDefaultColumnFamily();
-//        test.testCertainColumnFamily();
+		test.testCertainColumnFamily();
 	}
 
 }

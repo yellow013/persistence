@@ -13,12 +13,12 @@ public interface RocksValue {
 	 */
 	@Nonnull
 	default ByteBuf value() {
-		return value(Unpooled.buffer(valueSize()));
+		return value(Unpooled.buffer(valueLength()));
 	}
 
 	@Nonnull
 	ByteBuf value(@Nonnull ByteBuf useBuf);
 
-	int valueSize();
+	int valueLength();
 
 }
