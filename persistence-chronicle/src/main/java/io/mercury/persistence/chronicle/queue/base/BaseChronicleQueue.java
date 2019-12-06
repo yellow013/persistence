@@ -1,6 +1,6 @@
 package io.mercury.persistence.chronicle.queue.base;
 
-import static io.mercury.common.utils.StringUtil.isPath;
+import static io.mercury.common.utils.StringUtil.fixPath;
 
 import java.io.File;
 import java.util.function.ObjIntConsumer;
@@ -15,15 +15,15 @@ import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
 public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends DataWriter<T>> {
 
+	private final String rootPath;
+	private final String folder;
+	private final FileCycle fileCycle;
+	private final ObjIntConsumer<File> storeFileListener;
+
 	private final File savePath;
-	private String name;
+	private final String name;
 
 	private SingleChronicleQueue internalQueue;
-
-	private String rootPath;
-	private String folder;
-	private FileCycle fileCycle;
-	private ObjIntConsumer<File> storeFileListener;
 
 	protected Logger logger;
 
@@ -33,12 +33,10 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 		this.fileCycle = builder.fileCycle;
 		this.storeFileListener = builder.storeFileListener;
 		this.logger = builder.logger;
-		this.savePath = new File(rootPath + FixedFolder + folder);
+		this.savePath = new File(rootPath + "chronicle-queue/" + folder);
 		this.name = folder;
 		initChronicleQueue();
 	}
-
-	private static final String FixedFolder = "chronicle-queue/";
 
 	private void initChronicleQueue() {
 		if (!savePath.exists())
@@ -105,24 +103,21 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 
 	public abstract W acquireWriter(String writerName);
 
-	public static final String DefaultRootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-	public static final String DefaultFolder = "default/";
-
 	protected abstract static class BaseBuilder<B extends BaseBuilder<B>> {
 
-		private String rootPath = DefaultRootPath;
-		private String folder = DefaultFolder;
+		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
+		private String folder = "default/";
 		private Logger logger = CommonLoggerFactory.getLogger(BaseChronicleQueue.class);
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
 		private ObjIntConsumer<File> storeFileListener;
 
 		public B rootPath(String rootPath) {
-			this.rootPath = isPath(rootPath) ? rootPath : rootPath + "/";
+			this.rootPath = fixPath(rootPath);
 			return getThis();
 		}
 
 		public B folder(String folder) {
-			this.folder = isPath(folder) ? folder : folder + "/";
+			this.folder = fixPath(folder);
 			return getThis();
 		}
 

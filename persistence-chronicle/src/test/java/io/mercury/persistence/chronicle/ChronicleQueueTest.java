@@ -3,6 +3,7 @@ package io.mercury.persistence.chronicle;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import io.mercury.persistence.chronicle.queue.ChronicleStringQueue;
@@ -10,8 +11,9 @@ import io.mercury.persistence.chronicle.queue.accessor.StringReader;
 import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
 import io.mercury.persistence.chronicle.queue.base.FileCycle;
 
-public class ChronicleStringQueueTest {
+public class ChronicleQueueTest {
 
+	@Ignore
 	@Test
 	public void test0() {
 		ChronicleStringQueue persistence = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();

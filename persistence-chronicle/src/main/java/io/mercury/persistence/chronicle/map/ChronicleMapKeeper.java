@@ -40,7 +40,7 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 		if (options.averageValue() != null)
 			builder.averageValue(options.averageValue());
 		if (options.persistent()) {
-			File persistedFile = new File(options.savePath().toFile(), filename);
+			File persistedFile = new File(options.savePath(), filename);
 			try {
 				if (!persistedFile.exists()) {
 					File parentFile = persistedFile.getParentFile();

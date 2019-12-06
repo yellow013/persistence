@@ -1,16 +1,25 @@
-package io.mercury.persistence.chronicle.map;
+package io.mercury.persistence.chronicle;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
+import io.mercury.common.collections.Capacity;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ThreadUtil;
+import io.mercury.persistence.chronicle.map.ChronicleMapKeeperOfLocalDate;
+import io.mercury.persistence.chronicle.map.ChronicleMapOptions;
 import net.openhft.chronicle.map.ChronicleMap;
 
-public class UseExample {
+public class ChronicleMapTest {
 
-	public static void main(String[] args) {
+	@Ignore
+	@Test
+	public void test0() {
 
 		ChronicleMapOptions<String, byte[]> options = ChronicleMapOptions
 				.builder(String.class, byte[].class, SysProperties.USER_HOME, "betting")
-				.averageKey("uuid__game__merOrderId______").averageValue(new byte[128]).build();
+				.capacityOfPow2(Capacity.L16_SIZE_65536).averageKey(new String(new byte[32]))
+				.averageValue(new byte[128]).build();
 
 		ChronicleMapKeeperOfLocalDate<String, byte[]> mapKeeper = new ChronicleMapKeeperOfLocalDate<>(options);
 
@@ -22,4 +31,5 @@ public class UseExample {
 		}
 
 	}
+
 }

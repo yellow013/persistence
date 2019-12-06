@@ -1,32 +1,32 @@
 package io.mercury.persistence.chronicle.map;
 
-import static io.mercury.common.utils.StringUtil.isPath;
+import static io.mercury.common.utils.StringUtil.fixPath;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 
+import io.mercury.common.collections.Capacity;
 import io.mercury.common.sys.SysProperties;
 
 public final class ChronicleMapOptions<K, V> {
 
-	private Class<K> keyClass;
-	private Class<V> valueClass;
-	private K averageKey;
-	private V averageValue;
+	private final Class<K> keyClass;
+	private final Class<V> valueClass;
+	private final K averageKey;
+	private final V averageValue;
 
-	private boolean putReturnsNull;
-	private boolean removeReturnsNull;
-	private boolean recover;
-	private boolean persistent;
+	private final boolean putReturnsNull;
+	private final boolean removeReturnsNull;
+	private final boolean recover;
+	private final boolean persistent;
 
-	private long entries;
-	private int actualChunkSize;
+	private final long entries;
+	private final int actualChunkSize;
 
-	private String rootPath;
-	private String folder;
+	private final String rootPath;
+	private final String folder;
 
 	// final save path
-	private Path savePath;
+	private final File savePath;
 
 	private ChronicleMapOptions(Builder<K, V> builder) {
 		this.keyClass = builder.keyClass;
@@ -41,17 +41,10 @@ public final class ChronicleMapOptions<K, V> {
 		this.actualChunkSize = builder.actualChunkSize;
 		this.rootPath = builder.rootPath;
 		this.folder = builder.folder;
-		initSavePath();
+		this.savePath = new File(rootPath + FixedFolder + folder);
 	}
 
 	private static final String FixedFolder = "chronicle-map/";
-
-	public static final String DefaultRootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-	public static final String DefaultFolder = "default/";
-
-	private void initSavePath() {
-		this.savePath = Paths.get(rootPath, FixedFolder, folder);
-	}
 
 	public static <K, V> Builder<K, V> builder(Class<K> keyClass, Class<V> valueClass) {
 		return new Builder<>(keyClass, valueClass);
@@ -109,7 +102,7 @@ public final class ChronicleMapOptions<K, V> {
 		return folder;
 	}
 
-	public Path savePath() {
+	public File savePath() {
 		return savePath;
 	}
 
@@ -117,8 +110,8 @@ public final class ChronicleMapOptions<K, V> {
 
 		private Class<K> keyClass;
 		private Class<V> valueClass;
-		private String rootPath = DefaultRootPath;
-		private String folder = DefaultRootPath;
+		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
+		private String folder = "default/";
 
 		private K averageKey;
 		private V averageValue;
@@ -139,8 +132,8 @@ public final class ChronicleMapOptions<K, V> {
 		public Builder(Class<K> keyClass, Class<V> valueClass, String rootPath, String folder) {
 			this.keyClass = keyClass;
 			this.valueClass = valueClass;
-			this.rootPath = isPath(rootPath) ? rootPath : rootPath + "/";
-			this.folder = isPath(folder) ? folder : folder + "/";
+			this.rootPath = fixPath(rootPath);
+			this.folder = fixPath(rootPath);
 		}
 
 		public Builder<K, V> averageKey(K averageKey) {
@@ -180,6 +173,11 @@ public final class ChronicleMapOptions<K, V> {
 
 		public Builder<K, V> entries(long entries) {
 			this.entries = entries;
+			return this;
+		}
+
+		public Builder<K, V> capacityOfPow2(Capacity capacity) {
+			this.entries = capacity.size();
 			return this;
 		}
 
