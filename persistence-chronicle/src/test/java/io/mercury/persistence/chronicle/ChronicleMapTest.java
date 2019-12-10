@@ -6,7 +6,7 @@ import org.junit.Test;
 import io.mercury.common.collections.Capacity;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ThreadUtil;
-import io.mercury.persistence.chronicle.map.ChronicleMapKeeperOfLocalDate;
+import io.mercury.persistence.chronicle.map.ChronicleMapKeeperOfDate;
 import io.mercury.persistence.chronicle.map.ChronicleMapOptions;
 import net.openhft.chronicle.map.ChronicleMap;
 
@@ -21,7 +21,7 @@ public class ChronicleMapTest {
 				.capacityOfPow2(Capacity.L16_SIZE_65536).averageKey(new String(new byte[32]))
 				.averageValue(new byte[128]).build();
 
-		ChronicleMapKeeperOfLocalDate<String, byte[]> mapKeeper = new ChronicleMapKeeperOfLocalDate<>(options);
+		ChronicleMapKeeperOfDate<String, byte[]> mapKeeper = new ChronicleMapKeeperOfDate<>(options);
 
 		ChronicleMap<String, byte[]> acquire = mapKeeper.acquire("2019.10.11");
 

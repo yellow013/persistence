@@ -6,9 +6,9 @@ import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.datetime.DateTimeUtil;
 import net.openhft.chronicle.map.ChronicleMap;
 
-public final class ChronicleMapKeeperOfLocalDate<K, V> extends ChronicleMapKeeper<K, V> {
+public final class ChronicleMapKeeperOfDate<K, V> extends ChronicleMapKeeper<K, V> {
 
-	public ChronicleMapKeeperOfLocalDate(ChronicleMapOptions<K, V> options) {
+	public ChronicleMapKeeperOfDate(ChronicleMapOptions<K, V> options) {
 		super(options);
 	}
 
