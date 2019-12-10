@@ -1,4 +1,4 @@
-package io.mercury.persistence.dsl;
+package io.mercury.persistence.rocksdb.dsl;
 
 public class Query {
 
