@@ -8,7 +8,7 @@ import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.io.JsonEncoder;
 import org.apache.avro.specific.SpecificRecord;
 
-import io.mercury.common.charset.Charsets;
+import io.mercury.common.character.Charsets;
 import io.mercury.common.serialization.TextSerializer;
 
 @NotThreadSafe
