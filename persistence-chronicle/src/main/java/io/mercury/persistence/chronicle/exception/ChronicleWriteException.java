@@ -1,4 +1,4 @@
-package io.mercury.persistence.chronicle.queue.base;
+package io.mercury.persistence.chronicle.exception;
 
 public class ChronicleWriteException extends RuntimeException {
 
