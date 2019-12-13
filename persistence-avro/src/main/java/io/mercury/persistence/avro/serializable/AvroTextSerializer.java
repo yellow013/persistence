@@ -30,7 +30,6 @@ public class AvroTextSerializer extends BaseAvroSerializer implements TextSerial
 	@Override
 	public String serialization(SpecificRecord record) {
 		writer.setSchema(record.getSchema());
-
 		try {
 			encoder = EncoderFactory.get().jsonEncoder(record.getSchema(), outputStream);
 			writer.write(record, encoder);
