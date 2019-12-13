@@ -2,12 +2,11 @@ package io.mercury.persistence.chronicle.queue.accessor;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import io.mercury.persistence.chronicle.queue.base.DataReader;
-import io.mercury.persistence.chronicle.queue.base.FileCycle;
+import io.mercury.persistence.chronicle.queue.FileCycle;
 import net.openhft.chronicle.queue.ExcerptTailer;
 
 @NotThreadSafe
-public final class StringReader extends DataReader<String> {
+public final class StringReader extends AbstractDataReader<String> {
 
 	private StringReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
 		super(name, tailer, fileCycle);

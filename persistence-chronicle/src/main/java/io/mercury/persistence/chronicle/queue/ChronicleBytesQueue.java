@@ -4,9 +4,8 @@ import java.nio.ByteBuffer;
 
 import io.mercury.persistence.chronicle.queue.accessor.BytesReader;
 import io.mercury.persistence.chronicle.queue.accessor.BytesWriter;
-import io.mercury.persistence.chronicle.queue.base.BaseChronicleQueue;
 
-public class ChronicleBytesQueue extends BaseChronicleQueue<ByteBuffer, BytesReader, BytesWriter> {
+public class ChronicleBytesQueue extends AbstractChronicleQueue<ByteBuffer, BytesReader, BytesWriter> {
 
 	private ChronicleBytesQueue(Builder builder) {
 		super(builder);
@@ -33,7 +32,7 @@ public class ChronicleBytesQueue extends BaseChronicleQueue<ByteBuffer, BytesRea
 		}
 
 		@Override
-		protected Builder getThis() {
+		protected Builder self() {
 			return this;
 		}
 

@@ -4,12 +4,11 @@ import java.nio.ByteBuffer;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import io.mercury.persistence.chronicle.queue.base.DataWriter;
 import net.openhft.chronicle.bytes.BytesStore;
 import net.openhft.chronicle.queue.ExcerptAppender;
 
 @NotThreadSafe
-public final class BytesWriter extends DataWriter<ByteBuffer> {
+public final class BytesWriter extends AbstractDataWriter<ByteBuffer> {
 
 	private BytesWriter(String name, ExcerptAppender appender) {
 		super(name, appender);

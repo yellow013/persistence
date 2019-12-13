@@ -2,11 +2,10 @@ package io.mercury.persistence.chronicle.queue.accessor;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import io.mercury.persistence.chronicle.queue.base.DataWriter;
 import net.openhft.chronicle.queue.ExcerptAppender;
 
 @NotThreadSafe
-public final class StringWriter extends DataWriter<String> {
+public final class StringWriter extends AbstractDataWriter<String> {
 
 	private StringWriter(String name, ExcerptAppender appender) {
 		super(name, appender);

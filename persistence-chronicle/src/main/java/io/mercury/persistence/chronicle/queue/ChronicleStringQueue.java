@@ -3,10 +3,8 @@ package io.mercury.persistence.chronicle.queue;
 import io.mercury.common.number.RandomNumber;
 import io.mercury.persistence.chronicle.queue.accessor.StringReader;
 import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
-import io.mercury.persistence.chronicle.queue.base.BaseChronicleQueue;
-import io.mercury.persistence.chronicle.queue.base.FileCycle;
 
-public class ChronicleStringQueue extends BaseChronicleQueue<String, StringReader, StringWriter> {
+public class ChronicleStringQueue extends AbstractChronicleQueue<String, StringReader, StringWriter> {
 
 	private ChronicleStringQueue(Builder builder) {
 		super(builder);
@@ -33,7 +31,7 @@ public class ChronicleStringQueue extends BaseChronicleQueue<String, StringReade
 		}
 
 		@Override
-		protected Builder getThis() {
+		protected Builder self() {
 			return this;
 		}
 

@@ -1,4 +1,4 @@
-package io.mercury.persistence.chronicle.queue.base;
+package io.mercury.persistence.chronicle.queue;
 
 import java.time.Instant;
 

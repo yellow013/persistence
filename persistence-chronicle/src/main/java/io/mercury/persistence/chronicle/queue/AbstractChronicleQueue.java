@@ -1,4 +1,4 @@
-package io.mercury.persistence.chronicle.queue.base;
+package io.mercury.persistence.chronicle.queue;
 
 import static io.mercury.common.utils.StringUtil.fixPath;
 
@@ -10,13 +10,16 @@ import org.slf4j.Logger;
 import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ShutdownHooks;
+import io.mercury.persistence.chronicle.queue.accessor.AbstractDataReader;
+import io.mercury.persistence.chronicle.queue.accessor.AbstractDataWriter;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
-public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends DataWriter<T>> {
+public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>, W extends AbstractDataWriter<T>> {
 
 	private final String rootPath;
 	private final String folder;
+	private final boolean readOnly;
 	private final FileCycle fileCycle;
 	private final ObjIntConsumer<File> storeFileListener;
 
@@ -27,10 +30,11 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 
 	protected Logger logger;
 
-	protected BaseChronicleQueue(BaseBuilder<?> builder) {
+	protected AbstractChronicleQueue(BaseBuilder<?> builder) {
 		this.rootPath = builder.rootPath;
 		this.folder = builder.folder;
 		this.fileCycle = builder.fileCycle;
+		this.readOnly = builder.readOnly;
 		this.storeFileListener = builder.storeFileListener;
 		this.logger = builder.logger;
 		this.savePath = new File(rootPath + "chronicle-queue/" + folder);
@@ -42,7 +46,7 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 		if (!savePath.exists())
 			savePath.mkdirs();
 		this.internalQueue = SingleChronicleQueueBuilder.single(savePath).rollCycle(fileCycle.getRollCycle())
-				.storeFileListener(this::storeFileHandle).build();
+				.readOnly(readOnly).storeFileListener(this::storeFileHandle).build();
 		// TODO 解决CPU缓存行填充问题
 		ShutdownHooks.addShutdownHookThread("ChronicleQueue-Cleanup", this::shutdownHandle);
 		logger.info("ChronicleDataQueue initialized -> name==[{}], desc==[{}]", name, fileCycle.getDesc());
@@ -107,36 +111,42 @@ public abstract class BaseChronicleQueue<T, R extends DataReader<T>, W extends D
 
 		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
 		private String folder = "default/";
-		private Logger logger = CommonLoggerFactory.getLogger(BaseChronicleQueue.class);
+		private boolean readOnly = false;
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
 		private ObjIntConsumer<File> storeFileListener;
+		private Logger logger = CommonLoggerFactory.getLogger(AbstractChronicleQueue.class);
 
 		public B rootPath(String rootPath) {
 			this.rootPath = fixPath(rootPath);
-			return getThis();
+			return self();
 		}
 
 		public B folder(String folder) {
 			this.folder = fixPath(folder);
-			return getThis();
+			return self();
 		}
 
-		public B logger(Logger logger) {
-			this.logger = logger;
-			return getThis();
+		public B setReadOnly(boolean readOnly) {
+			this.readOnly = readOnly;
+			return self();
 		}
 
 		public B fileCycle(FileCycle fileCycle) {
 			this.fileCycle = fileCycle;
-			return getThis();
+			return self();
 		}
 
 		public B storeFileListener(ObjIntConsumer<File> storeFileListener) {
 			this.storeFileListener = storeFileListener;
-			return getThis();
+			return self();
 		}
 
-		protected abstract B getThis();
+		public B logger(Logger logger) {
+			this.logger = logger;
+			return self();
+		}
+
+		protected abstract B self();
 
 	}
 

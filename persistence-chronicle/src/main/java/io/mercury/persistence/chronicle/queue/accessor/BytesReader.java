@@ -4,13 +4,12 @@ import java.nio.ByteBuffer;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import io.mercury.persistence.chronicle.queue.base.DataReader;
-import io.mercury.persistence.chronicle.queue.base.FileCycle;
+import io.mercury.persistence.chronicle.queue.FileCycle;
 import net.openhft.chronicle.bytes.Bytes;
 import net.openhft.chronicle.queue.ExcerptTailer;
 
 @NotThreadSafe
-public final class BytesReader extends DataReader<ByteBuffer> {
+public final class BytesReader extends AbstractDataReader<ByteBuffer> {
 
 	private BytesReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
 		super(name, tailer, fileCycle);
