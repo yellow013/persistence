@@ -7,9 +7,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import io.mercury.persistence.chronicle.queue.ChronicleStringQueue;
+import io.mercury.persistence.chronicle.queue.FileCycle;
 import io.mercury.persistence.chronicle.queue.accessor.StringReader;
 import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
-import io.mercury.persistence.chronicle.queue.base.FileCycle;
 
 public class ChronicleQueueTest {
 

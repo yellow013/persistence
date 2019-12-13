@@ -18,7 +18,7 @@ public class ChronicleMapTest {
 
 		ChronicleMapOptions<String, byte[]> options = ChronicleMapOptions
 				.builder(String.class, byte[].class, SysProperties.USER_HOME, "betting")
-				.capacityOfPow2(Capacity.L16_SIZE_65536).averageKey(new String(new byte[32]))
+				.entriesOfPow2(Capacity.L16_SIZE_65536).averageKey(new String(new byte[32]))
 				.averageValue(new byte[128]).build();
 
 		ChronicleMapKeeperOfDate<String, byte[]> mapKeeper = new ChronicleMapKeeperOfDate<>(options);
