@@ -176,7 +176,7 @@ public final class ChronicleMapOptions<K, V> {
 			return this;
 		}
 
-		public Builder<K, V> capacityOfPow2(Capacity capacity) {
+		public Builder<K, V> entriesOfPow2(Capacity capacity) {
 			this.entries = capacity.size();
 			return this;
 		}

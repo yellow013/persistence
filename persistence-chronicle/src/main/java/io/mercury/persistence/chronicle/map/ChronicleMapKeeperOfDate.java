@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.datetime.DateTimeUtil;
+import io.mercury.persistence.chronicle.exception.ChronicleIOException;
 import net.openhft.chronicle.map.ChronicleMap;
 
 public final class ChronicleMapKeeperOfDate<K, V> extends ChronicleMapKeeper<K, V> {
