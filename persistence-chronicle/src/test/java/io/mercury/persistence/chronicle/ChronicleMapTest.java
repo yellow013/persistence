@@ -6,8 +6,8 @@ import org.junit.Test;
 import io.mercury.common.collections.Capacity;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ThreadUtil;
+import io.mercury.persistence.chronicle.map.ChronicleMapConfigurator;
 import io.mercury.persistence.chronicle.map.ChronicleMapKeeperOfDate;
-import io.mercury.persistence.chronicle.map.ChronicleMapOptions;
 import net.openhft.chronicle.map.ChronicleMap;
 
 public class ChronicleMapTest {
@@ -16,7 +16,7 @@ public class ChronicleMapTest {
 	@Test
 	public void test0() {
 
-		ChronicleMapOptions<String, byte[]> options = ChronicleMapOptions
+		ChronicleMapConfigurator<String, byte[]> options = ChronicleMapConfigurator
 				.builder(String.class, byte[].class, SysProperties.USER_HOME, "betting")
 				.entriesOfPow2(Capacity.L16_SIZE_65536).averageKey(new String(new byte[32]))
 				.averageValue(new byte[128]).build();
