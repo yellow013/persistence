@@ -9,8 +9,8 @@ import net.openhft.chronicle.map.ChronicleMap;
 
 public final class ChronicleMapKeeperOfDate<K, V> extends ChronicleMapKeeper<K, V> {
 
-	public ChronicleMapKeeperOfDate(ChronicleMapOptions<K, V> options) {
-		super(options);
+	public ChronicleMapKeeperOfDate(ChronicleMapConfigurator<K, V> configurator) {
+		super(configurator);
 	}
 
 	@MayThrowsRuntimeException(ChronicleIOException.class)

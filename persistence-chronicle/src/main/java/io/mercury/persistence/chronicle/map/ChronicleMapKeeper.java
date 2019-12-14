@@ -15,12 +15,12 @@ import net.openhft.chronicle.map.ChronicleMapBuilder;
 @ThreadSafe
 public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K, V>> {
 
-	private ChronicleMapOptions<K, V> options;
+	private ChronicleMapConfigurator<K, V> configurator;
 
-	public ChronicleMapKeeper(@Nonnull ChronicleMapOptions<K, V> options) {
-		if (options == null)
+	public ChronicleMapKeeper(@Nonnull ChronicleMapConfigurator<K, V> configurator) {
+		if (configurator == null)
 			throw new IllegalArgumentException("attributes can not be null");
-		this.options = options;
+		this.configurator = configurator;
 	}
 
 	@MayThrowsRuntimeException(ChronicleIOException.class)
@@ -31,17 +31,17 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 
 	@Override
 	protected ChronicleMap<K, V> createWithKey(String filename) {
-		ChronicleMapBuilder<K, V> builder = ChronicleMapBuilder.of(options.keyClass(), options.valueClass())
-				.putReturnsNull(options.putReturnsNull()).removeReturnsNull(options.removeReturnsNull())
-				.entries(options.entries());
-		if (options.actualChunkSize() > 0)
-			builder.actualChunkSize(options.actualChunkSize());
-		if (options.averageKey() != null)
-			builder.averageKey(options.averageKey());
-		if (options.averageValue() != null)
-			builder.averageValue(options.averageValue());
-		if (options.persistent()) {
-			File persistedFile = new File(options.savePath(), filename);
+		ChronicleMapBuilder<K, V> builder = ChronicleMapBuilder.of(configurator.keyClass(), configurator.valueClass())
+				.putReturnsNull(configurator.putReturnsNull()).removeReturnsNull(configurator.removeReturnsNull())
+				.entries(configurator.entries());
+		if (configurator.actualChunkSize() > 0)
+			builder.actualChunkSize(configurator.actualChunkSize());
+		if (configurator.averageKey() != null)
+			builder.averageKey(configurator.averageKey());
+		if (configurator.averageValue() != null)
+			builder.averageValue(configurator.averageValue());
+		if (configurator.persistent()) {
+			File persistedFile = new File(configurator.savePath(), filename);
 			try {
 				if (!persistedFile.exists()) {
 					File parentFile = persistedFile.getParentFile();
@@ -49,7 +49,7 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 						parentFile.mkdirs();
 					return builder.createPersistedTo(persistedFile);
 				} else {
-					if (options.recover())
+					if (configurator.recover())
 						return builder.createOrRecoverPersistedTo(persistedFile);
 					else
 						return builder.createPersistedTo(persistedFile);

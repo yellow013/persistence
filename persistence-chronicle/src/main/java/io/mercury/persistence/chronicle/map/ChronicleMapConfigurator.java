@@ -3,11 +3,16 @@ package io.mercury.persistence.chronicle.map;
 import static io.mercury.common.utils.StringUtil.fixPath;
 
 import java.io.File;
+import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
+import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.collections.Capacity;
+import io.mercury.common.config.Configurator;
 import io.mercury.common.sys.SysProperties;
 
-public final class ChronicleMapOptions<K, V> {
+public final class ChronicleMapConfigurator<K, V> implements Configurator {
 
 	private final Class<K> keyClass;
 	private final Class<V> valueClass;
@@ -28,7 +33,9 @@ public final class ChronicleMapOptions<K, V> {
 	// final save path
 	private final File savePath;
 
-	private ChronicleMapOptions(Builder<K, V> builder) {
+	private final String name;
+
+	private ChronicleMapConfigurator(Builder<K, V> builder) {
 		this.keyClass = builder.keyClass;
 		this.valueClass = builder.valueClass;
 		this.averageKey = builder.averageKey;
@@ -42,16 +49,34 @@ public final class ChronicleMapOptions<K, V> {
 		this.rootPath = builder.rootPath;
 		this.folder = builder.folder;
 		this.savePath = new File(rootPath + FixedFolder + folder);
+		this.name = buildName();
+	}
+
+	private String buildName() {
+		return savePath.getAbsolutePath() + ":[key==" + keyClass.getSimpleName() + ",value=="
+				+ valueClass.getSimpleName() + "]";
+
 	}
 
 	private static final String FixedFolder = "chronicle-map/";
 
-	public static <K, V> Builder<K, V> builder(Class<K> keyClass, Class<V> valueClass) {
+	@MayThrowsRuntimeException(NullPointerException.class)
+	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass) {
+		Objects.requireNonNull(keyClass, "key class can not be null");
+		Objects.requireNonNull(valueClass, "value class can not be null");
 		return new Builder<>(keyClass, valueClass);
 	}
 
-	public static <K, V> Builder<K, V> builder(Class<K> keyClass, Class<V> valueClass, String rootPath, String folder) {
+	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass,
+			String rootPath, String folder) {
+		Objects.requireNonNull(keyClass, "key class can not be null");
+		Objects.requireNonNull(valueClass, "value class can not be null");
 		return new Builder<>(keyClass, valueClass, rootPath, folder);
+	}
+
+	@Override
+	public String name() {
+		return name;
 	}
 
 	public Class<K> keyClass() {
@@ -181,8 +206,8 @@ public final class ChronicleMapOptions<K, V> {
 			return this;
 		}
 
-		public ChronicleMapOptions<K, V> build() {
-			return new ChronicleMapOptions<>(this);
+		public ChronicleMapConfigurator<K, V> build() {
+			return new ChronicleMapConfigurator<>(this);
 		}
 	}
 
