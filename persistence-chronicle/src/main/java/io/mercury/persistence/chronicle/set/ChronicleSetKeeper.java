@@ -8,6 +8,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.collections.customize.BaseKeeper;
+import io.mercury.common.utils.Assertor;
 import io.mercury.persistence.chronicle.exception.ChronicleIOException;
 import net.openhft.chronicle.set.ChronicleSet;
 import net.openhft.chronicle.set.ChronicleSetBuilder;
@@ -18,9 +19,7 @@ public class ChronicleSetKeeper<K> extends BaseKeeper<String, ChronicleSet<K>> {
 	private ChronicleSetConfigurator<K> configurator;
 
 	public ChronicleSetKeeper(@Nonnull ChronicleSetConfigurator<K> configurator) {
-		if (configurator == null)
-			throw new IllegalArgumentException("attributes can not be null");
-		this.configurator = configurator;
+		this.configurator = Assertor.nonNull(configurator, "configurator");
 	}
 
 	@MayThrowsRuntimeException(ChronicleIOException.class)
@@ -31,7 +30,6 @@ public class ChronicleSetKeeper<K> extends BaseKeeper<String, ChronicleSet<K>> {
 
 	@Override
 	protected ChronicleSet<K> createWithKey(String filename) {
-
 		ChronicleSetBuilder<K> builder = ChronicleSetBuilder.of(configurator.keyClass())
 				.entries(configurator.entries());
 		if (configurator.actualChunkSize() > 0)

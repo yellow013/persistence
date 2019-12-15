@@ -6,6 +6,7 @@ import java.io.File;
 
 import io.mercury.common.collections.Capacity;
 import io.mercury.common.sys.SysProperties;
+import io.mercury.common.utils.Assertor;
 
 public final class ChronicleSetConfigurator<K> {
 
@@ -39,11 +40,11 @@ public final class ChronicleSetConfigurator<K> {
 	private static final String FixedFolder = "chronicle-set/";
 
 	public static <K> Builder<K> builder(Class<K> keyClass) {
-		return new Builder<>(keyClass);
+		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"));
 	}
 
 	public static <K> Builder<K> builder(Class<K> keyClass, String rootPath, String folder) {
-		return new Builder<>(keyClass, rootPath, folder);
+		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"), rootPath, folder);
 	}
 
 	public Class<K> keyClass() {
