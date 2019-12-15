@@ -3,7 +3,6 @@ package io.mercury.persistence.chronicle.map;
 import static io.mercury.common.utils.StringUtil.fixPath;
 
 import java.io.File;
-import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -11,6 +10,7 @@ import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.collections.Capacity;
 import io.mercury.common.config.Configurator;
 import io.mercury.common.sys.SysProperties;
+import io.mercury.common.utils.Assertor;
 
 public final class ChronicleMapConfigurator<K, V> implements Configurator {
 
@@ -62,16 +62,13 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 
 	@MayThrowsRuntimeException(NullPointerException.class)
 	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass) {
-		Objects.requireNonNull(keyClass, "key class can not be null");
-		Objects.requireNonNull(valueClass, "value class can not be null");
-		return new Builder<>(keyClass, valueClass);
+		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"), Assertor.nonNull(valueClass, "valueClass"));
 	}
 
 	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass,
 			String rootPath, String folder) {
-		Objects.requireNonNull(keyClass, "key class can not be null");
-		Objects.requireNonNull(valueClass, "value class can not be null");
-		return new Builder<>(keyClass, valueClass, rootPath, folder);
+		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"), Assertor.nonNull(valueClass, "valueClass"),
+				rootPath, folder);
 	}
 
 	@Override

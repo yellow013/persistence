@@ -8,6 +8,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.collections.customize.BaseKeeper;
+import io.mercury.common.utils.Assertor;
 import io.mercury.persistence.chronicle.exception.ChronicleIOException;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
@@ -18,9 +19,7 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 	private ChronicleMapConfigurator<K, V> configurator;
 
 	public ChronicleMapKeeper(@Nonnull ChronicleMapConfigurator<K, V> configurator) {
-		if (configurator == null)
-			throw new IllegalArgumentException("attributes can not be null");
-		this.configurator = configurator;
+		this.configurator = Assertor.nonNull(configurator, "configurator");
 	}
 
 	@MayThrowsRuntimeException(ChronicleIOException.class)
