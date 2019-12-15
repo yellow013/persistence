@@ -5,10 +5,11 @@ import static io.mercury.common.utils.StringUtil.fixPath;
 import java.io.File;
 
 import org.rocksdb.Options;
+import org.rocksdb.WALRecoveryMode;
 
 import io.mercury.common.sys.SysProperties;
 
-public final class RocksDBOptions {
+public final class RocksDBConfigurator {
 
 	private final String rootPath;
 	private final String folder;
@@ -16,15 +17,17 @@ public final class RocksDBOptions {
 
 	private final Options options;
 
-	private RocksDBOptions(Builder builder) {
+	private RocksDBConfigurator(Builder builder) {
 		this.rootPath = builder.rootPath;
 		this.folder = builder.folder;
-		this.savePath = new File(rootPath + "rocksdb/" + folder);
+		this.savePath = new File(rootPath + FixedFolder + folder);
 		this.options = new Options();
 		options.setCreateIfMissing(builder.createIfMissing);
 		options.setCreateMissingColumnFamilies(builder.createMissingColumnFamilies);
-
+		options.setWalRecoveryMode(builder.walRecoveryMode);
 	}
+
+	private static final String FixedFolder = "rocksdb/";
 
 	public String rootPath() {
 		return rootPath;
@@ -53,33 +56,35 @@ public final class RocksDBOptions {
 
 		private boolean createIfMissing = true;
 		private boolean createMissingColumnFamilies = false;
+		private WALRecoveryMode walRecoveryMode = WALRecoveryMode.PointInTimeRecovery;
 
-		public void rootPath(String rootPath) {
+		public Builder rootPath(String rootPath) {
 			this.rootPath = fixPath(rootPath);
+			return this;
 		}
 
-		public void folder(String folder) {
+		public Builder folder(String folder) {
 			this.folder = fixPath(folder);
+			return this;
 		}
 
-		public boolean createIfMissing() {
-			return createIfMissing;
-		}
-
-		public void createIfMissing(boolean createIfMissing) {
+		public Builder createIfMissing(boolean createIfMissing) {
 			this.createIfMissing = createIfMissing;
+			return this;
 		}
 
-		public boolean createMissingColumnFamilies() {
-			return createMissingColumnFamilies;
-		}
-
-		public void createMissingColumnFamilies(boolean createMissingColumnFamilies) {
+		public Builder createMissingColumnFamilies(boolean createMissingColumnFamilies) {
 			this.createMissingColumnFamilies = createMissingColumnFamilies;
+			return this;
 		}
 
-		public RocksDBOptions build() {
-			return new RocksDBOptions(this);
+		public Builder walRecoveryMode(WALRecoveryMode walRecoveryMode) {
+			this.walRecoveryMode = walRecoveryMode;
+			return this;
+		}
+
+		public RocksDBConfigurator build() {
+			return new RocksDBConfigurator(this);
 		}
 
 	}
