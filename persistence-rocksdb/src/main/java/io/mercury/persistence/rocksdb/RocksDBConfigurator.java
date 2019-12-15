@@ -58,6 +58,9 @@ public final class RocksDBConfigurator {
 		private boolean createMissingColumnFamilies = false;
 		private WALRecoveryMode walRecoveryMode = WALRecoveryMode.PointInTimeRecovery;
 
+		private Builder() {
+		}
+
 		public Builder rootPath(String rootPath) {
 			this.rootPath = fixPath(rootPath);
 			return this;
