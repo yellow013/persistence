@@ -1,5 +1,7 @@
 package io.mercury.persistence.chronicle.queue.accessor;
 
+import javax.annotation.CheckForNull;
+
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.persistence.chronicle.exception.ChronicleReadException;
 import io.mercury.persistence.chronicle.queue.FileCycle;
@@ -69,6 +71,7 @@ public abstract class AbstractDataReader<T> {
 	 * @throws ChronicleReadException
 	 */
 	@MayThrowsRuntimeException(ChronicleReadException.class)
+	@CheckForNull
 	public T next() throws ChronicleReadException {
 		try {
 			return next0();

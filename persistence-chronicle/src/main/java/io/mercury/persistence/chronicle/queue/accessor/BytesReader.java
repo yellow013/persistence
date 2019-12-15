@@ -11,24 +11,35 @@ import net.openhft.chronicle.queue.ExcerptTailer;
 @NotThreadSafe
 public final class BytesReader extends AbstractDataReader<ByteBuffer> {
 
-	private BytesReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
+	private final int readBufferSize;
+	private final boolean useDirectMemory;
+
+	private BytesReader(String name, int readBufferSize, boolean useDirectMemory, ExcerptTailer tailer,
+			FileCycle fileCycle) {
 		super(name, tailer, fileCycle);
+		this.readBufferSize = readBufferSize;
+		this.useDirectMemory = useDirectMemory;
 	}
 
-	public static BytesReader wrap(String name, ExcerptTailer tailer, FileCycle fileCycle) {
-		return new BytesReader(name, tailer, fileCycle);
+	public static BytesReader wrap(String name, int readBufferSize, boolean useDirectMemory, ExcerptTailer tailer,
+			FileCycle fileCycle) {
+		return new BytesReader(name, readBufferSize, useDirectMemory, tailer, fileCycle);
 	}
 
 	@Override
 	protected ByteBuffer next0() {
-		// use heap memory
-		Bytes<ByteBuffer> bytes = Bytes.elasticByteBuffer();
+		Bytes<ByteBuffer> bytes;
+		if (useDirectMemory)
+			// use direct memory
+			bytes = Bytes.elasticByteBuffer(readBufferSize);
+		else
+			// use heap memory
+			bytes = Bytes.elasticHeapByteBuffer(readBufferSize);
 		tailer.readBytes(bytes);
-		// use direct memory
-		// bytes.toTemporaryDirectByteBuffer();
-		ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length());
-		bytes.copyTo(byteBuffer);
-		return byteBuffer;// ByteBuffer.wrap(bytes.toByteArray());
+		if (bytes.isEmpty())
+			return null;
+		// System.out.println(bytes.toDebugString());
+		return bytes.underlyingObject();
 	}
 
 }

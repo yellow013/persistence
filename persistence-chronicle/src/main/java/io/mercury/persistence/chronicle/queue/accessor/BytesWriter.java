@@ -20,7 +20,7 @@ public final class BytesWriter extends AbstractDataWriter<ByteBuffer> {
 
 	@Override
 	protected void append0(ByteBuffer t) {
-		// use heap memory
+		// use heap memory or direct determined by byteBuffer
 		appender.writeBytes(BytesStore.wrap(t));
 	}
 
