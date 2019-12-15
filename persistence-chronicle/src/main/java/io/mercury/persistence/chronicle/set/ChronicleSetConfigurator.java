@@ -97,11 +97,11 @@ public final class ChronicleSetConfigurator<K> {
 		private long entries = 32 << 16;
 		private int actualChunkSize;
 
-		public Builder(Class<K> keyClass) {
+		private Builder(Class<K> keyClass) {
 			this.keyClass = keyClass;
 		}
 
-		public Builder(Class<K> keyClass, String rootPath, String folder) {
+		private Builder(Class<K> keyClass, String rootPath, String folder) {
 			this.keyClass = keyClass;
 			this.rootPath = fixPath(rootPath);
 			this.folder = fixPath(rootPath);

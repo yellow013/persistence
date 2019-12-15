@@ -37,6 +37,9 @@ public class ChronicleBytesQueue extends AbstractChronicleQueue<ByteBuffer, Byte
 
 		private int readBufferSize = 256;
 		private boolean useDirectMemory = false;
+		
+		private Builder() {
+		}
 
 		public ChronicleBytesQueue build() {
 			return new ChronicleBytesQueue(this);

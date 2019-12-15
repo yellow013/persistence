@@ -143,15 +143,15 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 		private boolean recover = false;
 		private boolean persistent = true;
 
-		private long entries = 32 << 16;
+		private long entries = Capacity.L16_SIZE_65536.size();
 		private int actualChunkSize;
 
-		public Builder(Class<K> keyClass, Class<V> valueClass) {
+		private Builder(Class<K> keyClass, Class<V> valueClass) {
 			this.keyClass = keyClass;
 			this.valueClass = valueClass;
 		}
 
-		public Builder(Class<K> keyClass, Class<V> valueClass, String rootPath, String folder) {
+		private Builder(Class<K> keyClass, Class<V> valueClass, String rootPath, String folder) {
 			this.keyClass = keyClass;
 			this.valueClass = valueClass;
 			this.rootPath = fixPath(rootPath);

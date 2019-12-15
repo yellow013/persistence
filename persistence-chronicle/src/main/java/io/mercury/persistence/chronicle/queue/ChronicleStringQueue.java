@@ -27,6 +27,9 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, StringR
 
 	public static class Builder extends BaseBuilder<Builder> {
 
+		private Builder() {
+		}
+
 		public ChronicleStringQueue build() {
 			return new ChronicleStringQueue(this);
 		}
