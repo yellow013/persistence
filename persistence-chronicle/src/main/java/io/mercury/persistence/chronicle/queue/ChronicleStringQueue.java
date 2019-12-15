@@ -1,6 +1,7 @@
 package io.mercury.persistence.chronicle.queue;
 
 import io.mercury.common.number.RandomNumber;
+import io.mercury.common.thread.ThreadUtil;
 import io.mercury.persistence.chronicle.queue.accessor.StringReader;
 import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
 
@@ -38,29 +39,30 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, StringR
 	}
 
 	public static void main(String[] args) {
-		ChronicleStringQueue dataPersistence = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.HOURLY).build();
-		StringWriter queueWriter = dataPersistence.acquireWriter();
-		StringReader queueReader = dataPersistence.createReader();
+		ChronicleStringQueue queue = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();
+		StringWriter queueWriter = queue.acquireWriter();
+		StringReader queueReader = queue.createReader();
 		new Thread(() -> {
 			for (;;) {
 				try {
 					queueWriter.append(String.valueOf(RandomNumber.randomLong()));
+					ThreadUtil.sleep(100);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}).start();
-		CharSequence read = "";
-		long nanoTime0 = System.nanoTime();
 		do {
 			try {
-				read = queueReader.next();
+				String next = queueReader.next();
+				if (next == null)
+					ThreadUtil.sleep(100);
+				else
+					System.out.println(next);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} while (read != null);
-		long nanoTime1 = System.nanoTime();
-		System.out.println((nanoTime1 - nanoTime0) / 1000);
+		} while (true);
 
 	}
 

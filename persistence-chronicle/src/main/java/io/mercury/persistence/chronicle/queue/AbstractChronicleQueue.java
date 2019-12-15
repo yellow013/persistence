@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ShutdownHooks;
+import io.mercury.common.utils.Assertor;
 import io.mercury.persistence.chronicle.queue.accessor.AbstractDataReader;
 import io.mercury.persistence.chronicle.queue.accessor.AbstractDataWriter;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
@@ -20,6 +21,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 	private final String rootPath;
 	private final String folder;
 	private final boolean readOnly;
+	private final long epoch;
 	private final FileCycle fileCycle;
 	private final ObjIntConsumer<File> storeFileListener;
 
@@ -35,6 +37,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 		this.folder = builder.folder;
 		this.fileCycle = builder.fileCycle;
 		this.readOnly = builder.readOnly;
+		this.epoch = builder.epoch;
 		this.storeFileListener = builder.storeFileListener;
 		this.logger = builder.logger;
 		this.savePath = new File(rootPath + "chronicle-queue/" + folder);
@@ -45,8 +48,11 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 	private void initChronicleQueue() {
 		if (!savePath.exists())
 			savePath.mkdirs();
-		this.internalQueue = SingleChronicleQueueBuilder.single(savePath).rollCycle(fileCycle.getRollCycle())
-				.readOnly(readOnly).storeFileListener(this::storeFileHandle).build();
+		SingleChronicleQueueBuilder queueBuilder = SingleChronicleQueueBuilder.single(savePath)
+				.rollCycle(fileCycle.getRollCycle()).readOnly(readOnly).storeFileListener(this::storeFileHandle);
+		if (epoch > 0L)
+			queueBuilder.epoch(epoch);
+		this.internalQueue = queueBuilder.build();
 		// TODO 解决CPU缓存行填充问题
 		ShutdownHooks.addShutdownHookThread("ChronicleQueue-Cleanup", this::shutdownHandle);
 		logger.info("ChronicleDataQueue initialized -> name==[{}], desc==[{}]", name, fileCycle.getDesc());
@@ -88,13 +94,6 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 		return internalQueue;
 	}
 
-	@Deprecated
-	public boolean deleteFolder() {
-		if (savePath.isAbsolute())
-			return savePath.delete();
-		return false;
-	}
-
 	public R createReader() {
 		return createReader(name);
 	}
@@ -112,6 +111,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
 		private String folder = "default/";
 		private boolean readOnly = false;
+		private long epoch = 0L;
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
 		private ObjIntConsumer<File> storeFileListener;
 		private Logger logger = CommonLoggerFactory.getLogger(AbstractChronicleQueue.class);
@@ -126,18 +126,23 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 			return self();
 		}
 
-		public B setReadOnly(boolean readOnly) {
+		public B readOnly(boolean readOnly) {
 			this.readOnly = readOnly;
 			return self();
 		}
 
+		public B epoch(long epoch) {
+			this.epoch = epoch;
+			return self();
+		}
+
 		public B fileCycle(FileCycle fileCycle) {
-			this.fileCycle = fileCycle;
+			this.fileCycle = Assertor.nonNull(fileCycle, "fileCycle");
 			return self();
 		}
 
 		public B storeFileListener(ObjIntConsumer<File> storeFileListener) {
-			this.storeFileListener = storeFileListener;
+			this.storeFileListener = Assertor.nonNull(storeFileListener, "storeFileListener");
 			return self();
 		}
 
