@@ -1,5 +1,7 @@
 package io.mercury.persistence.chronicle.queue.accessor;
 
+import javax.annotation.Nonnull;
+
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.persistence.chronicle.exception.ChronicleWriteException;
 import net.openhft.chronicle.queue.ExcerptAppender;
@@ -38,7 +40,7 @@ public abstract class AbstractDataWriter<T> {
 	 * @throws ChronicleWriteException
 	 */
 	@MayThrowsRuntimeException(ChronicleWriteException.class)
-	public void append(T t) throws ChronicleWriteException {
+	public void append(@Nonnull T t) throws ChronicleWriteException {
 		try {
 			append0(t);
 		} catch (Exception e) {
