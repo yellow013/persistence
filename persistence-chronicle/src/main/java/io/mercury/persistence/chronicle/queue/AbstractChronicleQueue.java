@@ -7,6 +7,8 @@ import java.util.function.ObjIntConsumer;
 
 import org.slf4j.Logger;
 
+import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
+import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ShutdownHooks;
@@ -28,7 +30,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 	private final File savePath;
 	private final String name;
 
-	private SingleChronicleQueue internalQueue;
+	private final SingleChronicleQueue internalQueue;
 
 	protected Logger logger;
 
@@ -42,25 +44,26 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 		this.logger = builder.logger;
 		this.savePath = new File(rootPath + "chronicle-queue/" + folder);
 		this.name = folder;
-		initChronicleQueue();
+		this.internalQueue = buildChronicleQueue();
+		logger.info("ChronicleDataQueue initialized -> name==[{}], desc==[{}]", name, fileCycle.getDesc());
 	}
 
-	private void initChronicleQueue() {
+	private SingleChronicleQueue buildChronicleQueue() {
 		if (!savePath.exists())
 			savePath.mkdirs();
 		SingleChronicleQueueBuilder queueBuilder = SingleChronicleQueueBuilder.single(savePath)
 				.rollCycle(fileCycle.getRollCycle()).readOnly(readOnly).storeFileListener(this::storeFileHandle);
 		if (epoch > 0L)
 			queueBuilder.epoch(epoch);
-		this.internalQueue = queueBuilder.build();
 		// TODO 解决CPU缓存行填充问题
 		ShutdownHooks.addShutdownHookThread("ChronicleQueue-Cleanup", this::shutdownHandle);
-		logger.info("ChronicleDataQueue initialized -> name==[{}], desc==[{}]", name, fileCycle.getDesc());
+		return queueBuilder.build();
 	}
 
 	private void shutdownHandle() {
+		logger.info("ChronicleQueue ShutdownHook of {} is start", name);
 		internalQueue.close();
-		logger.info("Run ShutdownHook of {}", name);
+		logger.info("ChronicleQueue ShutdownHook of {} is finished", name);
 	}
 
 	private void storeFileHandle(int cycle, File file) {
@@ -100,6 +103,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 
 	public abstract R createReader(String readerName);
 
+	@MayThrowsRuntimeException(IllegalStateException.class)
 	public W acquireWriter() {
 		return acquireWriter(name);
 	}
@@ -109,7 +113,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 	protected abstract static class BaseBuilder<B extends BaseBuilder<B>> {
 
 		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-		private String folder = "default/";
+		private String folder = "auto-create-" + DateTimeUtil.datetimeToSecond() + "/";
 		private boolean readOnly = false;
 		private long epoch = 0L;
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
@@ -147,7 +151,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>,
 		}
 
 		public B logger(Logger logger) {
-			this.logger = logger;
+			this.logger = Assertor.nonNull(logger, "logger");
 			return self();
 		}
 

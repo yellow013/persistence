@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.collections.Capacity;
 import io.mercury.common.config.Configurator;
+import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.utils.Assertor;
 
@@ -133,7 +134,7 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 		private Class<K> keyClass;
 		private Class<V> valueClass;
 		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-		private String folder = "default/";
+		private String folder = "auto-create-" + DateTimeUtil.datetimeToSecond() + "/";
 
 		private K averageKey;
 		private V averageValue;

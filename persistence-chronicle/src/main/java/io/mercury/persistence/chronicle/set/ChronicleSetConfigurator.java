@@ -5,6 +5,7 @@ import static io.mercury.common.utils.StringUtil.fixPath;
 import java.io.File;
 
 import io.mercury.common.collections.Capacity;
+import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.utils.Assertor;
 
@@ -87,7 +88,7 @@ public final class ChronicleSetConfigurator<K> {
 
 		private Class<K> keyClass;
 		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-		private String folder = "default/";
+		private String folder = "auto-create-" + DateTimeUtil.datetimeToSecond() + "/";
 
 		private K averageKey;
 
