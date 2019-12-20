@@ -9,7 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public final class JsonWrapper {
+public final class GsonWrapper {
 
 	private static final Gson GsonNormal = new GsonBuilder().create();
 

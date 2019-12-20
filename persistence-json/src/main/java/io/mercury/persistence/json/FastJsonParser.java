@@ -13,13 +13,34 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.ImmutableMap;
 import org.eclipse.collections.api.map.MutableMap;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.collections.ImmutableLists;
 import io.mercury.common.collections.ImmutableMaps;
 import io.mercury.common.collections.MutableLists;
 import io.mercury.common.collections.MutableMaps;
 
-public final class JsonParser {
+public final class FastJsonParser {
+
+	@MayThrowsRuntimeException(JsonParseException.class)
+	public static final JSONObject toJSONObject(@Nonnull String json) {
+		try {
+			return parseObject(json);
+		} catch (Exception e) {
+			throw new JsonParseException(json, e);
+		}
+	}
+
+	@MayThrowsRuntimeException(JsonParseException.class)
+	public static final JSONArray toJSONArray(@Nonnull String json) {
+		try {
+			return parseArray(json);
+		} catch (Exception e) {
+			throw new JsonParseException(json, e);
+		}
+	}
 
 	@MayThrowsRuntimeException(JsonParseException.class)
 	public static final <T> T toObject(@Nonnull String json, @Nonnull Class<T> clazz) {
@@ -79,7 +100,7 @@ public final class JsonParser {
 		}
 	}
 
-	@MayThrowsRuntimeException( JsonParseException.class )
+	@MayThrowsRuntimeException(JsonParseException.class)
 	public static final MutableMap<String, Object> toMutableMap(@Nonnull String json) {
 		try {
 			return MutableMaps.newUnifiedMap(
@@ -90,7 +111,7 @@ public final class JsonParser {
 		}
 	}
 
-	@MayThrowsRuntimeException( JsonParseException.class )
+	@MayThrowsRuntimeException(JsonParseException.class)
 	public static final ImmutableMap<String, Object> toImmutableMap(@Nonnull String json) {
 		try {
 			return ImmutableMaps.newMap(
