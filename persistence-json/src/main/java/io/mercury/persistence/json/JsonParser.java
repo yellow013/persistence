@@ -22,7 +22,7 @@ import io.mercury.common.collections.ImmutableMaps;
 import io.mercury.common.collections.MutableLists;
 import io.mercury.common.collections.MutableMaps;
 
-public final class FastJsonParser {
+public final class JsonParser {
 
 	@MayThrowsRuntimeException(JsonParseException.class)
 	public static final JSONObject toJSONObject(@Nonnull String json) {
