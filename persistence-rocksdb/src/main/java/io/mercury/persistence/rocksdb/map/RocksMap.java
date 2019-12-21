@@ -10,6 +10,7 @@ import org.rocksdb.DBOptions;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
+import org.rocksdb.Statistics;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.thread.ShutdownHooks;
@@ -28,7 +29,8 @@ public class RocksMap<K extends RocksKey, V extends RocksValue> implements Close
 		DBOptions dbOptions = new DBOptions();
 		ColumnFamilyOptions columnFamilyOptions = new ColumnFamilyOptions();
 		this.options = new Options(dbOptions, columnFamilyOptions);
-		
+		Statistics statistics = new Statistics();
+		options.setStatistics(statistics);
 		
 		
 		options.setCreateIfMissing(true);
