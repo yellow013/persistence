@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>org.rocksdb</groupId>
 			<artifactId>rocksdbjni</artifactId>
-			<version>6.3.6</version>
+			<version>6.4.6</version>
 		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
