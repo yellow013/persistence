@@ -1,29 +1,28 @@
-package io.mercury.persistence.chronicle.queue.accessor;
+package io.mercury.persistence.chronicle.queue;
 
 import java.nio.ByteBuffer;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import io.mercury.persistence.chronicle.queue.FileCycle;
 import net.openhft.chronicle.bytes.Bytes;
 import net.openhft.chronicle.queue.ExcerptTailer;
 
 @NotThreadSafe
-public final class BytesReader extends AbstractDataReader<ByteBuffer> {
+public final class ChronicleBytesReader extends AbstractChronicleReader<ByteBuffer> {
 
 	private final int readBufferSize;
 	private final boolean useDirectMemory;
 
-	private BytesReader(String name, int readBufferSize, boolean useDirectMemory, ExcerptTailer tailer,
+	private ChronicleBytesReader(String name, int readBufferSize, boolean useDirectMemory, ExcerptTailer tailer,
 			FileCycle fileCycle) {
 		super(name, tailer, fileCycle);
 		this.readBufferSize = readBufferSize;
 		this.useDirectMemory = useDirectMemory;
 	}
 
-	public static BytesReader wrap(String name, int readBufferSize, boolean useDirectMemory, ExcerptTailer tailer,
+	static ChronicleBytesReader wrap(String name, int readBufferSize, boolean useDirectMemory, ExcerptTailer tailer,
 			FileCycle fileCycle) {
-		return new BytesReader(name, readBufferSize, useDirectMemory, tailer, fileCycle);
+		return new ChronicleBytesReader(name, readBufferSize, useDirectMemory, tailer, fileCycle);
 	}
 
 	@Override

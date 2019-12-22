@@ -1,14 +1,13 @@
-package io.mercury.persistence.chronicle.queue.accessor;
+package io.mercury.persistence.chronicle.queue;
 
 import javax.annotation.CheckForNull;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.persistence.chronicle.exception.ChronicleReadException;
-import io.mercury.persistence.chronicle.queue.FileCycle;
 import net.openhft.chronicle.queue.ExcerptTailer;
 import net.openhft.chronicle.queue.TailerState;
 
-public abstract class AbstractDataReader<T> {
+abstract class AbstractChronicleReader<T> {
 
 	protected ExcerptTailer tailer;
 
@@ -16,7 +15,7 @@ public abstract class AbstractDataReader<T> {
 
 	private String name;
 
-	protected AbstractDataReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
+	protected AbstractChronicleReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
 		this.name = name;
 		this.tailer = tailer;
 		this.fileCycle = fileCycle;

@@ -6,11 +6,10 @@ import javax.annotation.concurrent.Immutable;
 
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.thread.ThreadUtil;
-import io.mercury.persistence.chronicle.queue.accessor.BytesReader;
-import io.mercury.persistence.chronicle.queue.accessor.BytesWriter;
 
 @Immutable
-public class ChronicleBytesQueue extends AbstractChronicleQueue<ByteBuffer, BytesReader, BytesWriter> {
+public class ChronicleBytesQueue
+		extends AbstractChronicleQueue<ByteBuffer, ChronicleBytesReader, ChronicleBytesWriter> {
 
 	private final int readBufferSize;
 	private final boolean useDirectMemory;
@@ -26,21 +25,21 @@ public class ChronicleBytesQueue extends AbstractChronicleQueue<ByteBuffer, Byte
 	}
 
 	@Override
-	public BytesReader createReader(String readerName) {
-		return BytesReader.wrap(readerName, readBufferSize, useDirectMemory, internalQueue().createTailer(),
+	public ChronicleBytesReader createReader(String readerName) {
+		return ChronicleBytesReader.wrap(readerName, readBufferSize, useDirectMemory, internalQueue().createTailer(),
 				fileCycle());
 	}
 
 	@Override
-	public BytesWriter acquireWriter(String writerName) {
-		return BytesWriter.wrap(writerName, internalQueue().acquireAppender());
+	public ChronicleBytesWriter acquireWriter(String writerName) {
+		return ChronicleBytesWriter.wrap(writerName, internalQueue().acquireAppender());
 	}
 
 	public static class Builder extends BaseBuilder<Builder> {
 
 		private int readBufferSize = 256;
 		private boolean useDirectMemory = false;
-		
+
 		private Builder() {
 		}
 
@@ -74,8 +73,8 @@ public class ChronicleBytesQueue extends AbstractChronicleQueue<ByteBuffer, Byte
 	public static void main(String[] args) {
 		ChronicleBytesQueue queue = ChronicleBytesQueue.newBuilder().folder("byte-test").readBufferSize(512)
 				.fileCycle(FileCycle.MINUTELY).build();
-		BytesWriter writer = queue.acquireWriter();
-		BytesReader reader = queue.createReader();
+		ChronicleBytesWriter writer = queue.acquireWriter();
+		ChronicleBytesReader reader = queue.createReader();
 		new Thread(() -> {
 			ByteBuffer buffer = ByteBuffer.allocate(512);
 			for (;;) {

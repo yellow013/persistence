@@ -4,11 +4,9 @@ import javax.annotation.concurrent.Immutable;
 
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.thread.ThreadUtil;
-import io.mercury.persistence.chronicle.queue.accessor.StringReader;
-import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
 
 @Immutable
-public class ChronicleStringQueue extends AbstractChronicleQueue<String, StringReader, StringWriter> {
+public class ChronicleStringQueue extends AbstractChronicleQueue<String, ChronicleStringReader, ChronicleStringWriter> {
 
 	private ChronicleStringQueue(Builder builder) {
 		super(builder);
@@ -19,13 +17,13 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, StringR
 	}
 
 	@Override
-	public StringReader createReader(String readerName) {
-		return StringReader.wrap(readerName, internalQueue().createTailer(), fileCycle());
+	public ChronicleStringReader createReader(String readerName) {
+		return ChronicleStringReader.wrap(readerName, internalQueue().createTailer(), fileCycle());
 	}
 
 	@Override
-	public StringWriter acquireWriter(String writerName) {
-		return StringWriter.wrap(writerName, internalQueue().acquireAppender());
+	public ChronicleStringWriter acquireWriter(String writerName) {
+		return ChronicleStringWriter.wrap(writerName, internalQueue().acquireAppender());
 	}
 
 	public static class Builder extends BaseBuilder<Builder> {
@@ -46,8 +44,8 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, StringR
 
 	public static void main(String[] args) {
 		ChronicleStringQueue queue = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();
-		StringWriter queueWriter = queue.acquireWriter();
-		StringReader queueReader = queue.createReader();
+		ChronicleStringWriter queueWriter = queue.acquireWriter();
+		ChronicleStringReader queueReader = queue.createReader();
 		new Thread(() -> {
 			for (;;) {
 				try {

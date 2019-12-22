@@ -1,4 +1,4 @@
-package io.mercury.persistence.chronicle.queue.accessor;
+package io.mercury.persistence.chronicle.queue;
 
 import javax.annotation.Nonnull;
 
@@ -6,13 +6,13 @@ import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.persistence.chronicle.exception.ChronicleWriteException;
 import net.openhft.chronicle.queue.ExcerptAppender;
 
-public abstract class AbstractDataWriter<T> {
+abstract class AbstractChronicleWriter<T> {
 
 	protected ExcerptAppender appender;
 
 	private String name;
 
-	protected AbstractDataWriter(String name, ExcerptAppender appender) {
+	protected AbstractChronicleWriter(String name, ExcerptAppender appender) {
 		this.name = name;
 		this.appender = appender;
 	}

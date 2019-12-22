@@ -1,19 +1,18 @@
-package io.mercury.persistence.chronicle.queue.accessor;
+package io.mercury.persistence.chronicle.queue;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import io.mercury.persistence.chronicle.queue.FileCycle;
 import net.openhft.chronicle.queue.ExcerptTailer;
 
 @NotThreadSafe
-public final class StringReader extends AbstractDataReader<String> {
+public final class ChronicleStringReader extends AbstractChronicleReader<String> {
 
-	private StringReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
+	private ChronicleStringReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
 		super(name, tailer, fileCycle);
 	}
 
-	public static StringReader wrap(String name, ExcerptTailer tailer, FileCycle fileCycle) {
-		return new StringReader(name, tailer, fileCycle);
+	static ChronicleStringReader wrap(String name, ExcerptTailer tailer, FileCycle fileCycle) {
+		return new ChronicleStringReader(name, tailer, fileCycle);
 	}
 
 	@Override

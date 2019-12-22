@@ -13,12 +13,10 @@ import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ShutdownHooks;
 import io.mercury.common.utils.Assertor;
-import io.mercury.persistence.chronicle.queue.accessor.AbstractDataReader;
-import io.mercury.persistence.chronicle.queue.accessor.AbstractDataWriter;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
-abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>, W extends AbstractDataWriter<T>> {
+abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W extends AbstractChronicleWriter<T>> {
 
 	private final String rootPath;
 	private final String folder;
