@@ -61,9 +61,11 @@ abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>, W exte
 	}
 
 	private void shutdownHandle() {
-		logger.info("ChronicleQueue ShutdownHook of {} is start", name);
+		// System.out.println("ChronicleQueue ShutdownHook of " + name + " start");
+		logger.info("ChronicleQueue ShutdownHook of {} start", name);
 		internalQueue.close();
-		logger.info("ChronicleQueue ShutdownHook of {} is finished", name);
+		// System.out.println("ChronicleQueue ShutdownHook of " + name + " finished");
+		logger.info("ChronicleQueue ShutdownHook of {} finished", name);
 	}
 
 	private void storeFileHandle(int cycle, File file) {

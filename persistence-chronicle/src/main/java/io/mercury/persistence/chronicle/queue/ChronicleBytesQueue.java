@@ -73,7 +73,6 @@ public class ChronicleBytesQueue extends AbstractChronicleQueue<ByteBuffer, Byte
 
 	public static void main(String[] args) {
 		ChronicleBytesQueue queue = ChronicleBytesQueue.newBuilder().folder("byte-test").readBufferSize(512)
-
 				.fileCycle(FileCycle.MINUTELY).build();
 		BytesWriter writer = queue.acquireWriter();
 		BytesReader reader = queue.createReader();
