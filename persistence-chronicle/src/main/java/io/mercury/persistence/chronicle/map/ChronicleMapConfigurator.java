@@ -5,6 +5,7 @@ import static io.mercury.common.utils.StringUtil.fixPath;
 import java.io.File;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.collections.Capacity;
@@ -13,6 +14,7 @@ import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.utils.Assertor;
 
+@Immutable
 public final class ChronicleMapConfigurator<K, V> implements Configurator {
 
 	private final Class<K> keyClass;

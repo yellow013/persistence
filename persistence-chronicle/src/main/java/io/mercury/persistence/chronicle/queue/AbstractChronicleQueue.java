@@ -18,7 +18,7 @@ import io.mercury.persistence.chronicle.queue.accessor.AbstractDataWriter;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
-public abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>, W extends AbstractDataWriter<T>> {
+abstract class AbstractChronicleQueue<T, R extends AbstractDataReader<T>, W extends AbstractDataWriter<T>> {
 
 	private final String rootPath;
 	private final String folder;

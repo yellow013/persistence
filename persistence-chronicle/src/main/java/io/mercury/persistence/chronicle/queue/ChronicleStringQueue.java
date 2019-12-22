@@ -1,10 +1,13 @@
 package io.mercury.persistence.chronicle.queue;
 
+import javax.annotation.concurrent.Immutable;
+
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.thread.ThreadUtil;
 import io.mercury.persistence.chronicle.queue.accessor.StringReader;
 import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
 
+@Immutable
 public class ChronicleStringQueue extends AbstractChronicleQueue<String, StringReader, StringWriter> {
 
 	private ChronicleStringQueue(Builder builder) {

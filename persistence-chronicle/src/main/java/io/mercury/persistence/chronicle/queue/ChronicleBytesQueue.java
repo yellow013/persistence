@@ -2,11 +2,14 @@ package io.mercury.persistence.chronicle.queue;
 
 import java.nio.ByteBuffer;
 
+import javax.annotation.concurrent.Immutable;
+
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.thread.ThreadUtil;
 import io.mercury.persistence.chronicle.queue.accessor.BytesReader;
 import io.mercury.persistence.chronicle.queue.accessor.BytesWriter;
 
+@Immutable
 public class ChronicleBytesQueue extends AbstractChronicleQueue<ByteBuffer, BytesReader, BytesWriter> {
 
 	private final int readBufferSize;
