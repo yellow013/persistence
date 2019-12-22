@@ -7,9 +7,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import io.mercury.persistence.chronicle.queue.ChronicleStringQueue;
+import io.mercury.persistence.chronicle.queue.ChronicleStringReader;
+import io.mercury.persistence.chronicle.queue.ChronicleStringWriter;
 import io.mercury.persistence.chronicle.queue.FileCycle;
-import io.mercury.persistence.chronicle.queue.accessor.StringReader;
-import io.mercury.persistence.chronicle.queue.accessor.StringWriter;
 
 public class ChronicleQueueTest {
 
@@ -17,8 +17,8 @@ public class ChronicleQueueTest {
 	@Test
 	public void test0() {
 		ChronicleStringQueue persistence = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();
-		StringWriter writer = persistence.acquireWriter();
-		StringReader reader = persistence.createReader();
+		ChronicleStringWriter writer = persistence.acquireWriter();
+		ChronicleStringReader reader = persistence.createReader();
 
 		LocalDateTime wantOf = LocalDateTime.of(2019, 9, 26, 20, 35);
 		// Start 2019-09-26T20:35:02.526
