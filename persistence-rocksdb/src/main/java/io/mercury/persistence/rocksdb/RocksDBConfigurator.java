@@ -4,11 +4,14 @@ import static io.mercury.common.utils.StringUtil.fixPath;
 
 import java.io.File;
 
+import javax.annotation.concurrent.Immutable;
+
 import org.rocksdb.Options;
 import org.rocksdb.WALRecoveryMode;
 
 import io.mercury.common.sys.SysProperties;
 
+@Immutable
 public final class RocksDBConfigurator {
 
 	private final String rootPath;
