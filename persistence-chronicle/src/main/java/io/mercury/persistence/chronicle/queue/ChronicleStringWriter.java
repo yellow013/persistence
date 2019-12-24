@@ -17,7 +17,7 @@ public final class ChronicleStringWriter extends AbstractChronicleWriter<String>
 
 	@Override
 	protected void append0(String t) {
-		appender.writeText(t);
+		internalAppender.writeText(t);
 	}
 
 }

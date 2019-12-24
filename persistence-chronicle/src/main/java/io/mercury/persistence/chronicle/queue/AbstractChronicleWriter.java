@@ -8,25 +8,25 @@ import net.openhft.chronicle.queue.ExcerptAppender;
 
 abstract class AbstractChronicleWriter<T> {
 
-	protected ExcerptAppender appender;
+	protected final ExcerptAppender internalAppender;
 
-	private String name;
+	private final String name;
 
 	protected AbstractChronicleWriter(String name, ExcerptAppender appender) {
 		this.name = name;
-		this.appender = appender;
+		this.internalAppender = appender;
 	}
 
-	public ExcerptAppender getAppender() {
-		return appender;
+	public ExcerptAppender internalAppender() {
+		return internalAppender;
 	}
 
 	public int cycle() {
-		return appender.cycle();
+		return internalAppender.cycle();
 	}
 
 	public int sourceId() {
-		return appender.sourceId();
+		return internalAppender.sourceId();
 	}
 
 	public String name() {

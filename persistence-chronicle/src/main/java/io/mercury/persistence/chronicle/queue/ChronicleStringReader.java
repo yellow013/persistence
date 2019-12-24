@@ -17,7 +17,7 @@ public final class ChronicleStringReader extends AbstractChronicleReader<String>
 
 	@Override
 	protected String next0() {
-		return tailer.readText();
+		return internalTailer.readText();
 	}
 
 }

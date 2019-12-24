@@ -1,5 +1,9 @@
 package io.mercury.persistence.chronicle.queue;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import javax.annotation.CheckForNull;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
@@ -9,20 +13,27 @@ import net.openhft.chronicle.queue.TailerState;
 
 abstract class AbstractChronicleReader<T> {
 
-	protected ExcerptTailer tailer;
+	protected final ExcerptTailer internalTailer;
 
-	private FileCycle fileCycle;
-
-	private String name;
+	private final FileCycle fileCycle;
+	private final String name;
 
 	protected AbstractChronicleReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
 		this.name = name;
-		this.tailer = tailer;
+		this.internalTailer = tailer;
 		this.fileCycle = fileCycle;
 	}
 
-	public ExcerptTailer getTailer() {
-		return tailer;
+	public ExcerptTailer internalTailer() {
+		return internalTailer;
+	}
+
+	public boolean moveTo(LocalDateTime dateTime, ZoneId zoneId) {
+		return moveTo(ZonedDateTime.of(dateTime, zoneId));
+	}
+
+	public boolean moveTo(ZonedDateTime dateTime) {
+		return moveTo(dateTime.toEpochSecond());
 	}
 
 	/**
@@ -32,31 +43,31 @@ abstract class AbstractChronicleReader<T> {
 	 * @return
 	 */
 	public boolean moveTo(long epochSecond) {
-		return tailer.moveToIndex(fileCycle.calculateIndex(epochSecond));
+		return internalTailer.moveToIndex(fileCycle.calculateIndex(epochSecond));
 	}
 
 	public void toStart() {
-		tailer.toStart();
+		internalTailer.toStart();
 	}
 
 	public void toEnd() {
-		tailer.toEnd();
+		internalTailer.toEnd();
 	}
 
 	public int cycle() {
-		return tailer.cycle();
+		return internalTailer.cycle();
 	}
 
 	public long epochSecond() {
-		return (long) tailer.cycle() * fileCycle.getSeconds();
+		return (long) internalTailer.cycle() * fileCycle.getSeconds();
 	}
 
 	public long index() {
-		return tailer.index();
+		return internalTailer.index();
 	}
 
 	public TailerState state() {
-		return tailer.state();
+		return internalTailer.state();
 	}
 
 	public String name() {
@@ -67,7 +78,7 @@ abstract class AbstractChronicleReader<T> {
 	 * Get next element of current cursor position.
 	 * 
 	 * @return
-	 * @throws ChronicleReadException
+	 * @throws ChronicleReadExceptions
 	 */
 	@MayThrowsRuntimeException(ChronicleReadException.class)
 	@CheckForNull

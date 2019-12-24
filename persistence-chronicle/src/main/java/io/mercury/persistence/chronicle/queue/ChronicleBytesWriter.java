@@ -21,7 +21,7 @@ public final class ChronicleBytesWriter extends AbstractChronicleWriter<ByteBuff
 	@Override
 	protected void append0(ByteBuffer t) {
 		// use heap memory or direct by the byteBuffer
-		appender.writeBytes(BytesStore.wrap(t));
+		internalAppender.writeBytes(BytesStore.wrap(t));
 	}
 
 }

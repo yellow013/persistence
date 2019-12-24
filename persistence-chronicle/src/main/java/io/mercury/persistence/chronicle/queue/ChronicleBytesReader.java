@@ -34,7 +34,7 @@ public final class ChronicleBytesReader extends AbstractChronicleReader<ByteBuff
 		else
 			// use heap memory
 			bytes = Bytes.elasticHeapByteBuffer(readBufferSize);
-		tailer.readBytes(bytes);
+		internalTailer.readBytes(bytes);
 		if (bytes.isEmpty())
 			return null;
 		// System.out.println(bytes.toDebugString());
