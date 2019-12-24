@@ -1,18 +1,21 @@
 package io.mercury.persistence.avro.serializable;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 import org.apache.avro.specific.SpecificDatumReader;
 import org.slf4j.Logger;
 
 import io.mercury.common.log.CommonLoggerFactory;
 
+@NotThreadSafe
 public abstract class BaseAvroDeserializer<T> {
 
 	protected Logger logger = CommonLoggerFactory.getLogger(getClass());
 
 	private SpecificDatumReader<T> datumReader;
-	
+
 	protected final SpecificDatumReader<T> getDatumReader(Class<T> tClass) {
-		if(datumReader == null) {
+		if (datumReader == null) {
 			datumReader = initDatumReader(tClass);
 		}
 		return datumReader;
