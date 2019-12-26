@@ -1,4 +1,4 @@
-package io.mercury.persistence.chronicle.set;
+package io.mercury.persistence.chronicle.hash.set;
 
 import static io.mercury.common.utils.StringUtil.fixPath;
 
