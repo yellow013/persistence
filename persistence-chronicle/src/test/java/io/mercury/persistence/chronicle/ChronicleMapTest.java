@@ -6,8 +6,8 @@ import org.junit.Test;
 import io.mercury.common.collections.Capacity;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ThreadUtil;
-import io.mercury.persistence.chronicle.map.ChronicleMapConfigurator;
-import io.mercury.persistence.chronicle.map.ChronicleMapKeeperOfDate;
+import io.mercury.persistence.chronicle.hash.map.ChronicleMapConfigurator;
+import io.mercury.persistence.chronicle.hash.map.ChronicleMapKeeperOfDate;
 import net.openhft.chronicle.map.ChronicleMap;
 
 public class ChronicleMapTest {

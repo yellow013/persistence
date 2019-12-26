@@ -1,5 +1,6 @@
 package io.mercury.persistence.chronicle.queue;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -7,6 +8,7 @@ import java.time.ZonedDateTime;
 import javax.annotation.CheckForNull;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
+import io.mercury.common.datetime.TimeConst;
 import io.mercury.persistence.chronicle.exception.ChronicleReadException;
 import net.openhft.chronicle.queue.ExcerptTailer;
 import net.openhft.chronicle.queue.TailerState;
@@ -28,6 +30,10 @@ abstract class AbstractChronicleReader<T> {
 		return internalTailer;
 	}
 
+	public boolean moveTo(LocalDate date) {
+		return moveTo(date.toEpochDay() * TimeConst.SECONDS_PER_DAY);
+	}
+
 	public boolean moveTo(LocalDateTime dateTime, ZoneId zoneId) {
 		return moveTo(ZonedDateTime.of(dateTime, zoneId));
 	}
@@ -43,7 +49,7 @@ abstract class AbstractChronicleReader<T> {
 	 * @return
 	 */
 	public boolean moveTo(long epochSecond) {
-		return internalTailer.moveToIndex(fileCycle.calculateIndex(epochSecond));
+		return internalTailer.moveToIndex(fileCycle.toIndex(epochSecond));
 	}
 
 	public void toStart() {
@@ -59,7 +65,7 @@ abstract class AbstractChronicleReader<T> {
 	}
 
 	public long epochSecond() {
-		return (long) internalTailer.cycle() * fileCycle.getSeconds();
+		return ((long) internalTailer.cycle()) * fileCycle.getSeconds();
 	}
 
 	public long index() {
