@@ -1,4 +1,4 @@
-package io.mercury.persistence.chronicle.map;
+package io.mercury.persistence.chronicle.hash.map;
 
 import static io.mercury.common.utils.StringUtil.fixPath;
 
@@ -58,7 +58,10 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 	private String buildName() {
 		return savePath.getAbsolutePath() + ":[key==" + keyClass.getSimpleName() + ",value=="
 				+ valueClass.getSimpleName() + "]";
+	}
 
+	public static <K, V> ChronicleMapConfigurator<K, V> ext() {
+		return null;
 	}
 
 	private static final String FixedFolder = "chronicle-map/";

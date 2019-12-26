@@ -1,7 +1,15 @@
-package io.mercury.persistence.chronicle.map;
+package io.mercury.persistence.chronicle.hash.map;
 
-public class ChronicleMapExt {
-	
-	
+import io.mercury.persistence.chronicle.hash.ScalableChronicle;
+import net.openhft.chronicle.map.ChronicleMap;
+
+public final class ScalableChronicleMap<K, V> implements ScalableChronicle<ChronicleMap<K, V>> {
+
+	private ChronicleMap<K, V> entity;
+
+	@Override
+	public ChronicleMap<K, V> entity() {
+		return entity;
+	}
 
 }

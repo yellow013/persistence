@@ -1,4 +1,4 @@
-package io.mercury.persistence.chronicle.map;
+package io.mercury.persistence.chronicle.hash.map;
 
 import java.time.LocalDate;
 
