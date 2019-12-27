@@ -7,10 +7,6 @@ public final class RocksRuntimeException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = -6940482392634006619L;
 
-	public RocksRuntimeException() {
-		super();
-	}
-
 	public RocksRuntimeException(String message) {
 		super(message);
 	}
