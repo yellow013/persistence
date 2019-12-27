@@ -1,5 +1,7 @@
 package io.mercury.persistence.json;
 
+import static com.alibaba.fastjson.JSON.isValidArray;
+import static com.alibaba.fastjson.JSON.isValidObject;
 import static com.alibaba.fastjson.JSON.parseArray;
 import static com.alibaba.fastjson.JSON.parseObject;
 
@@ -23,6 +25,14 @@ import io.mercury.common.collections.MutableLists;
 import io.mercury.common.collections.MutableMaps;
 
 public final class JsonParser {
+
+	public static boolean isJsonObject(String str) {
+		return isValidObject(str);
+	}
+
+	public static boolean isJsonArray(String str) {
+		return isValidArray(str);
+	}
 
 	@MayThrowsRuntimeException(JsonParseException.class)
 	public static final JSONObject toJSONObject(@Nonnull String json) {
