@@ -3,6 +3,7 @@ package io.mercury.persistence.chronicle.queue;
 import static io.mercury.common.utils.StringUtil.fixPath;
 
 import java.io.File;
+import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 
 import org.slf4j.Logger;
@@ -10,13 +11,15 @@ import org.slf4j.Logger;
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.log.CommonLoggerFactory;
+import io.mercury.common.number.RandomNumber;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ShutdownHooks;
 import io.mercury.common.utils.Assertor;
+import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReadParam;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
-abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W extends AbstractChronicleWriter<T>> {
+public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W extends AbstractChronicleAppender<T>> {
 
 	private final String rootPath;
 	private final String folder;
@@ -26,13 +29,13 @@ abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W
 	private final ObjIntConsumer<File> storeFileListener;
 
 	private final File savePath;
-	private final String name;
+	private final String queueName;
 
 	private final SingleChronicleQueue internalQueue;
 
 	protected Logger logger;
 
-	protected AbstractChronicleQueue(BaseBuilder<?> builder) {
+	AbstractChronicleQueue(BaseBuilder<?> builder) {
 		this.rootPath = builder.rootPath;
 		this.folder = builder.folder;
 		this.fileCycle = builder.fileCycle;
@@ -41,9 +44,9 @@ abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W
 		this.storeFileListener = builder.storeFileListener;
 		this.logger = builder.logger;
 		this.savePath = new File(rootPath + "chronicle-queue/" + folder);
-		this.name = folder;
+		this.queueName = folder;
 		this.internalQueue = buildChronicleQueue();
-		logger.info("ChronicleDataQueue initialized -> name==[{}], desc==[{}]", name, fileCycle.getDesc());
+		logger.info("ChronicleDataQueue initialized -> name==[{}], desc==[{}]", queueName, fileCycle.getDesc());
 	}
 
 	private SingleChronicleQueue buildChronicleQueue() {
@@ -60,10 +63,10 @@ abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W
 
 	private void shutdownHandle() {
 		// System.out.println("ChronicleQueue ShutdownHook of " + name + " start");
-		logger.info("ChronicleQueue ShutdownHook of {} start", name);
+		logger.info("ChronicleQueue ShutdownHook of {} start", queueName);
 		internalQueue.close();
 		// System.out.println("ChronicleQueue ShutdownHook of " + name + " finished");
-		logger.info("ChronicleQueue ShutdownHook of {} finished", name);
+		logger.info("ChronicleQueue ShutdownHook of {} finished", queueName);
 	}
 
 	private void storeFileHandle(int cycle, File file) {
@@ -73,8 +76,8 @@ abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W
 			logger.info("Released file : cycle==[{}], file==[{}]", cycle, file.getAbsolutePath());
 	}
 
-	public String name() {
-		return name;
+	public String queueName() {
+		return queueName;
 	}
 
 	public String rootPath() {
@@ -97,18 +100,35 @@ abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W
 		return internalQueue;
 	}
 
-	public R createReader() {
-		return createReader(name);
+	public R buildReader(Consumer<T> consumer) {
+		return buildReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), ReadParam.Default(), logger,
+				consumer);
 	}
 
-	public abstract R createReader(String readerName);
+	public R buildReader(String readerName, Consumer<T> consumer) {
+		return buildReader(readerName, ReadParam.Default(), logger, consumer);
+	}
+
+	public R buildReader(ReadParam readParam, Consumer<T> consumer) {
+		return buildReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), readParam, logger, consumer);
+	}
+
+	public R buildReader(String readerName, ReadParam readParam, Consumer<T> consumer) {
+		return buildReader(readerName, readParam, logger, consumer);
+	}
+
+	protected abstract R buildReader(String readerName, ReadParam readParam, Logger logger, Consumer<T> consumer);
 
 	@MayThrowsRuntimeException(IllegalStateException.class)
-	public W acquireWriter() {
-		return acquireWriter(name);
+	public W acquireAppender() {
+		return acquireAppender(queueName + "-Appender-" + RandomNumber.randomUnsignedInt(), logger);
 	}
 
-	public abstract W acquireWriter(String writerName);
+	public W acquireAppender(String writerName) {
+		return acquireAppender(writerName, logger);
+	}
+
+	protected abstract W acquireAppender(String writerName, Logger logger);
 
 	protected abstract static class BaseBuilder<B extends BaseBuilder<B>> {
 

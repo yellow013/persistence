@@ -1,15 +1,19 @@
 package io.mercury.persistence.chronicle.queue;
 
 import java.nio.ByteBuffer;
+import java.util.function.Consumer;
 
 import javax.annotation.concurrent.Immutable;
 
+import org.slf4j.Logger;
+
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.thread.ThreadUtil;
+import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReadParam;
 
 @Immutable
 public class ChronicleBytesQueue
-		extends AbstractChronicleQueue<ByteBuffer, ChronicleBytesReader, ChronicleBytesWriter> {
+		extends AbstractChronicleQueue<ByteBuffer, ChronicleBytesReader, ChronicleBytesAppender> {
 
 	private final int readBufferSize;
 	private final boolean useDirectMemory;
@@ -25,14 +29,15 @@ public class ChronicleBytesQueue
 	}
 
 	@Override
-	public ChronicleBytesReader createReader(String readerName) {
-		return ChronicleBytesReader.wrap(readerName, readBufferSize, useDirectMemory, internalQueue().createTailer(),
-				fileCycle());
+	protected ChronicleBytesReader buildReader(String readerName, ReadParam readParam, Logger logger,
+			Consumer<ByteBuffer> consumer) {
+		return new ChronicleBytesReader(readerName, fileCycle(), readParam, logger, readBufferSize, useDirectMemory,
+				internalQueue().createTailer(), consumer);
 	}
 
 	@Override
-	public ChronicleBytesWriter acquireWriter(String writerName) {
-		return ChronicleBytesWriter.wrap(writerName, internalQueue().acquireAppender());
+	protected ChronicleBytesAppender acquireAppender(String writerName, Logger logger) {
+		return new ChronicleBytesAppender(writerName, logger, internalQueue().acquireAppender());
 	}
 
 	public static class Builder extends BaseBuilder<Builder> {
@@ -73,8 +78,8 @@ public class ChronicleBytesQueue
 	public static void main(String[] args) {
 		ChronicleBytesQueue queue = ChronicleBytesQueue.newBuilder().folder("byte-test").readBufferSize(512)
 				.fileCycle(FileCycle.MINUTELY).build();
-		ChronicleBytesWriter writer = queue.acquireWriter();
-		ChronicleBytesReader reader = queue.createReader();
+		ChronicleBytesAppender writer = queue.acquireAppender();
+		ChronicleBytesReader reader = queue.buildReader(next -> System.out.println(new String(next.array())));
 		new Thread(() -> {
 			ByteBuffer buffer = ByteBuffer.allocate(512);
 			for (;;) {
@@ -87,18 +92,7 @@ public class ChronicleBytesQueue
 				}
 			}
 		}).start();
-		do {
-			try {
-				ByteBuffer next = reader.next();
-				if (next == null)
-					ThreadUtil.sleep(100);
-				else
-					System.out.println(new String(next.array()));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} while (true);
-
+		reader.runWithNewThread();
 	}
 
 }

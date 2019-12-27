@@ -1,12 +1,17 @@
 package io.mercury.persistence.chronicle.queue;
 
+import java.util.function.Consumer;
+
 import javax.annotation.concurrent.Immutable;
+
+import org.slf4j.Logger;
 
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.thread.ThreadUtil;
+import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReadParam;
 
 @Immutable
-public class ChronicleStringQueue extends AbstractChronicleQueue<String, ChronicleStringReader, ChronicleStringWriter> {
+public class ChronicleStringQueue extends AbstractChronicleQueue<String, ChronicleStringReader, ChronicleStringAppender> {
 
 	private ChronicleStringQueue(Builder builder) {
 		super(builder);
@@ -17,13 +22,15 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, Chronic
 	}
 
 	@Override
-	public ChronicleStringReader createReader(String readerName) {
-		return ChronicleStringReader.wrap(readerName, internalQueue().createTailer(), fileCycle());
+	protected ChronicleStringReader buildReader(String readerName, ReadParam readParam, Logger logger,
+			Consumer<String> consumer) {
+		return new ChronicleStringReader(readerName, fileCycle(), readParam, logger, internalQueue().createTailer(),
+				consumer);
 	}
 
 	@Override
-	public ChronicleStringWriter acquireWriter(String writerName) {
-		return ChronicleStringWriter.wrap(writerName, internalQueue().acquireAppender());
+	protected ChronicleStringAppender acquireAppender(String writerName, Logger logger) {
+		return new ChronicleStringAppender(writerName, logger, internalQueue().acquireAppender());
 	}
 
 	public static class Builder extends BaseBuilder<Builder> {
@@ -44,8 +51,8 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, Chronic
 
 	public static void main(String[] args) {
 		ChronicleStringQueue queue = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();
-		ChronicleStringWriter queueWriter = queue.acquireWriter();
-		ChronicleStringReader queueReader = queue.createReader();
+		ChronicleStringAppender queueWriter = queue.acquireAppender();
+		ChronicleStringReader queueReader = queue.buildReader(next -> System.out.println(next));
 		new Thread(() -> {
 			for (;;) {
 				try {
@@ -56,18 +63,7 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, Chronic
 				}
 			}
 		}).start();
-		do {
-			try {
-				String next = queueReader.next();
-				if (next == null)
-					ThreadUtil.sleep(100);
-				else
-					System.out.println(next);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} while (true);
-
+		queueReader.runWithNewThread();
 	}
 
 }
