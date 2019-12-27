@@ -1,8 +1,11 @@
 package io.mercury.persistence.chronicle.queue;
 
 import java.nio.ByteBuffer;
+import java.util.function.Consumer;
 
 import javax.annotation.concurrent.NotThreadSafe;
+
+import org.slf4j.Logger;
 
 import net.openhft.chronicle.bytes.Bytes;
 import net.openhft.chronicle.queue.ExcerptTailer;
@@ -13,16 +16,11 @@ public final class ChronicleBytesReader extends AbstractChronicleReader<ByteBuff
 	private final int readBufferSize;
 	private final boolean useDirectMemory;
 
-	private ChronicleBytesReader(String name, int readBufferSize, boolean useDirectMemory, ExcerptTailer tailer,
-			FileCycle fileCycle) {
-		super(name, tailer, fileCycle);
+	ChronicleBytesReader(String name, FileCycle fileCycle, ReadParam readParam, Logger logger, int readBufferSize,
+			boolean useDirectMemory, ExcerptTailer excerptTailer, Consumer<ByteBuffer> consumer) {
+		super(name, fileCycle, readParam, logger, excerptTailer, consumer);
 		this.readBufferSize = readBufferSize;
 		this.useDirectMemory = useDirectMemory;
-	}
-
-	static ChronicleBytesReader wrap(String name, int readBufferSize, boolean useDirectMemory, ExcerptTailer tailer,
-			FileCycle fileCycle) {
-		return new ChronicleBytesReader(name, readBufferSize, useDirectMemory, tailer, fileCycle);
 	}
 
 	@Override
@@ -34,7 +32,7 @@ public final class ChronicleBytesReader extends AbstractChronicleReader<ByteBuff
 		else
 			// use heap memory
 			bytes = Bytes.elasticHeapByteBuffer(readBufferSize);
-		internalTailer.readBytes(bytes);
+		excerptTailer.readBytes(bytes);
 		if (bytes.isEmpty())
 			return null;
 		// System.out.println(bytes.toDebugString());

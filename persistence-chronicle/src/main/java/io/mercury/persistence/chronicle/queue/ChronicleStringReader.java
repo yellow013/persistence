@@ -1,23 +1,24 @@
 package io.mercury.persistence.chronicle.queue;
 
+import java.util.function.Consumer;
+
 import javax.annotation.concurrent.NotThreadSafe;
+
+import org.slf4j.Logger;
 
 import net.openhft.chronicle.queue.ExcerptTailer;
 
 @NotThreadSafe
 public final class ChronicleStringReader extends AbstractChronicleReader<String> {
 
-	private ChronicleStringReader(String name, ExcerptTailer tailer, FileCycle fileCycle) {
-		super(name, tailer, fileCycle);
-	}
-
-	static ChronicleStringReader wrap(String name, ExcerptTailer tailer, FileCycle fileCycle) {
-		return new ChronicleStringReader(name, tailer, fileCycle);
+	ChronicleStringReader(String name, FileCycle fileCycle, ReadParam readParam, Logger logger,
+			ExcerptTailer excerptTailer, Consumer<String> consumer) {
+		super(name, fileCycle, readParam, logger, excerptTailer, consumer);
 	}
 
 	@Override
 	protected String next0() {
-		return internalTailer.readText();
+		return excerptTailer.readText();
 	}
 
 }
