@@ -2,35 +2,39 @@ package io.mercury.persistence.chronicle.queue;
 
 import javax.annotation.Nonnull;
 
+import org.slf4j.Logger;
+
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.persistence.chronicle.exception.ChronicleWriteException;
 import net.openhft.chronicle.queue.ExcerptAppender;
 
-abstract class AbstractChronicleWriter<T> {
+public abstract class AbstractChronicleAppender<T> {
 
-	protected final ExcerptAppender internalAppender;
+	private final String writerName;
 
-	private final String name;
+	protected final Logger logger;
+	protected final ExcerptAppender excerptAppender;
 
-	protected AbstractChronicleWriter(String name, ExcerptAppender appender) {
-		this.name = name;
-		this.internalAppender = appender;
+	AbstractChronicleAppender(String writerName, Logger logger, ExcerptAppender excerptAppender) {
+		this.writerName = writerName;
+		this.logger = logger;
+		this.excerptAppender = excerptAppender;
 	}
 
-	public ExcerptAppender internalAppender() {
-		return internalAppender;
+	public ExcerptAppender excerptAppender() {
+		return excerptAppender;
 	}
 
 	public int cycle() {
-		return internalAppender.cycle();
+		return excerptAppender.cycle();
 	}
 
 	public int sourceId() {
-		return internalAppender.sourceId();
+		return excerptAppender.sourceId();
 	}
 
-	public String name() {
-		return name;
+	public String writerName() {
+		return writerName;
 	}
 
 	/**
