@@ -14,8 +14,8 @@
 	<name>persistence-chronicle</name>
 
 	<properties>
-		<!-- chronicle-queue last version : 5.17.30 -->
-		<chronicle-queue.version>5.17.30</chronicle-queue.version>
+		<!-- chronicle-queue last version : 5.17.33 -->
+		<chronicle-queue.version>5.17.33</chronicle-queue.version>
 		<!-- chronicle-map last version : 3.17.8 -->
 		<chronicle-map.version>3.17.8</chronicle-map.version>
 	</properties>
@@ -26,11 +26,8 @@
 			<groupId>io.mercury</groupId>
 			<artifactId>commons-core</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>io.mercury</groupId>
-			<artifactId>commons-concurrent</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>io.mercury</groupId> <artifactId>commons-concurrent</artifactId> 
+			<version>1.0-SNAPSHOT</version> </dependency> -->
 		<dependency>
 			<groupId>net.openhft</groupId>
 			<artifactId>chronicle-core</artifactId>

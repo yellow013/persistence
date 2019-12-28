@@ -14,14 +14,23 @@
 	<name>persistence-rocksdb</name>
 
 	<dependencies>
+	
+		<!-- RocksDB fat jar that contains .so files for linux32 and linux64, jnilib 
+			files for Mac OSX, and a .dll for Windows x64. -->
 		<dependency>
 			<groupId>org.rocksdb</groupId>
 			<artifactId>rocksdbjni</artifactId>
 			<version>6.4.6</version>
 		</dependency>
+
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-buffer</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>net.openhft</groupId>
+			<artifactId>zero-allocation-hashing</artifactId>
 		</dependency>
 	</dependencies>
 

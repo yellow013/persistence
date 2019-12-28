@@ -13,6 +13,9 @@
 	<artifactId>persistence-mapdb</artifactId>
 	<name>persistence-mapdb</name>
 
+	<!-- MapDB provides concurrent Maps, Sets and Queues backed by disk storage 
+		or off-heap memory. It is a fast, scalable and easy to use embedded Java 
+		database. -->
 	<dependencies>
 		<dependency>
 			<groupId>org.mapdb</groupId>
@@ -20,5 +23,5 @@
 			<version>3.0.7</version>
 		</dependency>
 	</dependencies>
-	
+
 </project>
