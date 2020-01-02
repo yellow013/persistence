@@ -8,7 +8,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
 import io.mercury.common.collections.customize.BaseKeeper;
-import io.mercury.common.utils.Assertor;
+import io.mercury.common.util.Assertor;
 import io.mercury.persistence.chronicle.exception.ChronicleIOException;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
@@ -25,7 +25,7 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 	@MayThrowsRuntimeException(ChronicleIOException.class)
 	@Override
 	public ChronicleMap<K, V> acquire(String filename) throws ChronicleIOException {
-		return super.acquire(filename);
+		return super.acquire(Assertor.nonNullAndEmpty(filename, "filename"));
 	}
 
 	@Override
