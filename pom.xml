@@ -15,9 +15,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>persistence-avro</module>
 		<module>persistence-chronicle</module>
-		<module>persistence-json</module>
 		<module>persistence-mapdb</module>
 		<module>persistence-rocksdb</module>
 		<module>persistence-sqlite</module>
@@ -65,11 +63,13 @@
 				<artifactId>commons-core</artifactId>
 				<version>${io.mercury.commons.version}</version>
 			</dependency>
+
 			<dependency>
-				<groupId>javax.persistence</groupId>
-				<artifactId>persistence-api</artifactId>
-				<version>1.0.2</version>
+				<groupId>org.hibernate.javax.persistence</groupId>
+				<artifactId>hibernate-jpa-2.1-api</artifactId>
+				<version>1.0.2.Final</version>
 			</dependency>
+
 			<dependency>
 				<groupId>io.netty</groupId>
 				<artifactId>netty-buffer</artifactId>
