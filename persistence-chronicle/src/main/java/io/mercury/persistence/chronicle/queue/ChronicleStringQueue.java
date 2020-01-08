@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.thread.ThreadUtil;
-import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReadParam;
+import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam;
 
 @Immutable
 public class ChronicleStringQueue extends AbstractChronicleQueue<String, ChronicleStringReader, ChronicleStringAppender> {
@@ -22,9 +22,9 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, Chronic
 	}
 
 	@Override
-	protected ChronicleStringReader buildReader(String readerName, ReadParam readParam, Logger logger,
+	protected ChronicleStringReader createReader(String readerName, ReaderParam readerParam, Logger logger,
 			Consumer<String> consumer) {
-		return new ChronicleStringReader(readerName, fileCycle(), readParam, logger, internalQueue().createTailer(),
+		return new ChronicleStringReader(readerName, fileCycle(), readerParam, logger, internalQueue().createTailer(),
 				consumer);
 	}
 
@@ -52,7 +52,7 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, Chronic
 	public static void main(String[] args) {
 		ChronicleStringQueue queue = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();
 		ChronicleStringAppender queueWriter = queue.acquireAppender();
-		ChronicleStringReader queueReader = queue.buildReader(next -> System.out.println(next));
+		ChronicleStringReader queueReader = queue.createReader(next -> System.out.println(next));
 		new Thread(() -> {
 			for (;;) {
 				try {
@@ -63,7 +63,7 @@ public class ChronicleStringQueue extends AbstractChronicleQueue<String, Chronic
 				}
 			}
 		}).start();
-		queueReader.runWithNewThread();
+		queueReader.runningOnNewThread();
 	}
 
 }
