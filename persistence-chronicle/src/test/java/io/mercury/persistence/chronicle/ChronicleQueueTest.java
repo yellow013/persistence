@@ -18,7 +18,7 @@ public class ChronicleQueueTest {
 	public void test0() {
 		ChronicleStringQueue persistence = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();
 		ChronicleStringAppender writer = persistence.acquireAppender();
-		ChronicleStringReader reader = persistence.buildReader(text -> System.out.println(text));
+		ChronicleStringReader reader = persistence.createReader(text -> System.out.println(text));
 
 		LocalDateTime wantOf = LocalDateTime.of(2019, 9, 26, 20, 35);
 		// Start 2019-09-26T20:35:02.526
@@ -26,7 +26,7 @@ public class ChronicleQueueTest {
 		long epochSecond = wantOf.toEpochSecond(ZoneOffset.ofHours(8));
 		boolean moved = reader.moveTo(epochSecond);
 		System.out.println(moved);
-		reader.runWithNewThread();
+		reader.runningOnNewThread();
 		while (true) {
 			try {
 				writer.append(LocalDateTime.now().toString());
