@@ -13,13 +13,13 @@ import net.openhft.chronicle.queue.ExcerptTailer;
 @NotThreadSafe
 public final class ChronicleBytesReader extends AbstractChronicleReader<ByteBuffer> {
 
-	private final int readBufferSize;
+	private final int bufferSize;
 	private final boolean useDirectMemory;
 
-	ChronicleBytesReader(String name, FileCycle fileCycle, ReadParam readParam, Logger logger, int readBufferSize,
+	ChronicleBytesReader(String name, FileCycle fileCycle, ReaderParam readerParam, Logger logger, int bufferSize,
 			boolean useDirectMemory, ExcerptTailer excerptTailer, Consumer<ByteBuffer> consumer) {
-		super(name, fileCycle, readParam, logger, excerptTailer, consumer);
-		this.readBufferSize = readBufferSize;
+		super(name, fileCycle, readerParam, logger, excerptTailer, consumer);
+		this.bufferSize = bufferSize;
 		this.useDirectMemory = useDirectMemory;
 	}
 
@@ -28,10 +28,10 @@ public final class ChronicleBytesReader extends AbstractChronicleReader<ByteBuff
 		Bytes<ByteBuffer> bytes;
 		if (useDirectMemory)
 			// use direct memory
-			bytes = Bytes.elasticByteBuffer(readBufferSize);
+			bytes = Bytes.elasticByteBuffer(bufferSize);
 		else
 			// use heap memory
-			bytes = Bytes.elasticHeapByteBuffer(readBufferSize);
+			bytes = Bytes.elasticHeapByteBuffer(bufferSize);
 		excerptTailer.readBytes(bytes);
 		if (bytes.isEmpty())
 			return null;

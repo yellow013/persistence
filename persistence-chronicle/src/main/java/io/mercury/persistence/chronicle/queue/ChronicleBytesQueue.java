@@ -9,18 +9,18 @@ import org.slf4j.Logger;
 
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.thread.ThreadUtil;
-import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReadParam;
+import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam;
 
 @Immutable
 public class ChronicleBytesQueue
 		extends AbstractChronicleQueue<ByteBuffer, ChronicleBytesReader, ChronicleBytesAppender> {
 
-	private final int readBufferSize;
+	private final int bufferSize;
 	private final boolean useDirectMemory;
 
 	private ChronicleBytesQueue(Builder builder) {
 		super(builder);
-		this.readBufferSize = builder.readBufferSize;
+		this.bufferSize = builder.bufferSize;
 		this.useDirectMemory = builder.useDirectMemory;
 	}
 
@@ -29,9 +29,9 @@ public class ChronicleBytesQueue
 	}
 
 	@Override
-	protected ChronicleBytesReader buildReader(String readerName, ReadParam readParam, Logger logger,
+	protected ChronicleBytesReader createReader(String readerName, ReaderParam readerParam, Logger logger,
 			Consumer<ByteBuffer> consumer) {
-		return new ChronicleBytesReader(readerName, fileCycle(), readParam, logger, readBufferSize, useDirectMemory,
+		return new ChronicleBytesReader(readerName, fileCycle(), readerParam, logger, bufferSize, useDirectMemory,
 				internalQueue().createTailer(), consumer);
 	}
 
@@ -42,7 +42,7 @@ public class ChronicleBytesQueue
 
 	public static class Builder extends BaseBuilder<Builder> {
 
-		private int readBufferSize = 256;
+		private int bufferSize = 256;
 		private boolean useDirectMemory = false;
 
 		private Builder() {
@@ -58,8 +58,8 @@ public class ChronicleBytesQueue
 		 * @param readBufferSize
 		 * @return
 		 */
-		public Builder readBufferSize(int readBufferSize) {
-			this.readBufferSize = Math.max(readBufferSize, 256);
+		public Builder bufferSize(int bufferSize) {
+			this.bufferSize = Math.max(bufferSize, 256);
 			return this;
 		}
 
@@ -76,10 +76,10 @@ public class ChronicleBytesQueue
 	}
 
 	public static void main(String[] args) {
-		ChronicleBytesQueue queue = ChronicleBytesQueue.newBuilder().folder("byte-test").readBufferSize(512)
+		ChronicleBytesQueue queue = ChronicleBytesQueue.newBuilder().folder("byte-test").bufferSize(512)
 				.fileCycle(FileCycle.MINUTELY).build();
 		ChronicleBytesAppender writer = queue.acquireAppender();
-		ChronicleBytesReader reader = queue.buildReader(next -> System.out.println(new String(next.array())));
+		ChronicleBytesReader reader = queue.createReader(next -> System.out.println(new String(next.array())));
 		new Thread(() -> {
 			ByteBuffer buffer = ByteBuffer.allocate(512);
 			for (;;) {
@@ -92,7 +92,7 @@ public class ChronicleBytesQueue
 				}
 			}
 		}).start();
-		reader.runWithNewThread();
+		reader.runningOnNewThread();
 	}
 
 }
