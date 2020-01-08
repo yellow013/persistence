@@ -1,5 +1,8 @@
 package io.mercury.persistence.chronicle.queue;
 
+import static io.mercury.common.thread.ThreadUtil.sleep;
+import static io.mercury.common.thread.ThreadUtil.startNewThread;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -8,10 +11,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotations.lang.ProtectedAbstractMethod;
 import io.mercury.common.datetime.TimeConst;
 import io.mercury.common.thread.ThreadUtil;
 import io.mercury.common.util.Assertor;
@@ -24,18 +29,18 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 	private final String readerName;
 	private final FileCycle fileCycle;
 
-	protected ReadParam readParam;
+	protected ReaderParam readerParam;
 
 	protected final Logger logger;
 	protected final ExcerptTailer excerptTailer;
 
 	private final Consumer<T> consumer;
 
-	AbstractChronicleReader(String readerName, FileCycle fileCycle, ReadParam readParam, Logger logger,
+	AbstractChronicleReader(String readerName, FileCycle fileCycle, ReaderParam readerParam, Logger logger,
 			ExcerptTailer excerptTailer, Consumer<T> consumer) {
 		this.readerName = readerName;
 		this.fileCycle = fileCycle;
-		this.readParam = readParam;
+		this.readerParam = readerParam;
 		this.logger = logger;
 		this.excerptTailer = excerptTailer;
 		this.consumer = consumer;
@@ -95,28 +100,36 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 		return readerName;
 	}
 
-	public Thread runWithNewThread() {
-		return runWithNewThread(readerName);
+	public Thread runningOnNewThread() {
+		return runningOnNewThread(readerName);
 	}
 
-	public Thread runWithNewThread(String threadName) {
+	public Thread runningOnNewThread(String threadName) {
 		return ThreadUtil.startNewThread(this, threadName);
 	}
 
-	public static class ReadParam {
+	public static final class ReaderParam {
 
+		// 是否读取失败后关闭线程
 		private boolean readFailCrash;
+		// 是否读取失败后记录日志
 		private boolean readFailLogging;
+		// 读取间隔时间单位
 		private TimeUnit readIntervalUnit;
+		// 读取时间
 		private long readIntervalTime;
+		// 延迟读取时间单位
 		private TimeUnit delayReadUnit;
+		// 延迟读取时间
 		private long delayReadTime;
+		// 是否等待数据写入
 		private boolean waitingData;
-
+		// 是否以异步方式退出
 		private boolean asyncExit;
+		// 退出函数
 		private Runnable exitRunnable;
 
-		private ReadParam(Builder builder) {
+		private ReaderParam(Builder builder) {
 			this.readFailCrash = builder.readFailCrash;
 			this.readFailLogging = builder.readFailLogging;
 			this.readIntervalUnit = builder.readIntervalUnit;
@@ -132,7 +145,7 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 			return new Builder();
 		}
 
-		static ReadParam Default() {
+		static ReaderParam Default() {
 			return new Builder().build();
 		}
 
@@ -142,11 +155,15 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 			private boolean readFailLogging = true;
 			private boolean waitingData = true;
 
+			// 缺省读取间隔
 			private TimeUnit readIntervalUnit = TimeUnit.MILLISECONDS;
 			private long readIntervalTime = 100;
+
+			// 缺省延迟时间
 			private TimeUnit delayReadUnit = TimeUnit.MILLISECONDS;
 			private long delayReadTime = 0;
 
+			// 缺省退出方式
 			private boolean asyncExit = false;
 			private Runnable exitRunnable;
 
@@ -182,13 +199,13 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 				return this;
 			}
 
-			public Builder exitRunnable(Runnable exitRunnable) {
+			public Builder exitRunnable(@Nullable Runnable exitRunnable) {
 				this.exitRunnable = exitRunnable;
 				return this;
 			}
 
-			public ReadParam build() {
-				return new ReadParam(this);
+			public ReaderParam build() {
+				return new ReaderParam(this);
 			}
 		}
 	}
@@ -211,28 +228,33 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 
 	@Override
 	public void run() {
-		if (readParam.delayReadTime > 0)
-			ThreadUtil.sleep(readParam.delayReadUnit, readParam.delayReadTime);
+		boolean readFailLogging = readerParam.readFailLogging;
+		boolean readFailCrash = readerParam.readFailCrash;
+		boolean waitingData = readerParam.waitingData;
+		TimeUnit readIntervalUnit = readerParam.readIntervalUnit;
+		long readIntervalTime = readerParam.readIntervalTime;
+		if (readerParam.delayReadTime > 0)
+			sleep(readerParam.delayReadUnit, readerParam.delayReadTime);
 		for (;;) {
 			T next = null;
 			try {
 				next = next();
 			} catch (ChronicleReadException e) {
-				if (readParam.readFailLogging)
+				if (readFailLogging)
 					logger.error("{} call next throw exception -> {}", readerName, e.getMessage(), e);
-				if (readParam.readFailCrash)
+				if (readFailCrash)
 					throw e;
 			}
 			if (next == null) {
-				if (readParam.waitingData)
-					ThreadUtil.sleep(readParam.readIntervalUnit, readParam.readIntervalTime);
+				if (waitingData)
+					sleep(readIntervalUnit, readIntervalTime);
 				else {
-					if (readParam.exitRunnable != null)
-						if (readParam.asyncExit)
-							ThreadUtil.startNewThread(readParam.exitRunnable, readerName + "-exit");
+					if (readerParam.exitRunnable != null)
+						if (readerParam.asyncExit)
+							startNewThread(readerParam.exitRunnable, readerName + "-exit");
 						else
-							readParam.exitRunnable.run();
-					logger.info("reader->{} exit.", readerName);
+							readerParam.exitRunnable.run();
+					logger.info("reader -> {} running exit", readerName);
 					break;
 				}
 			} else
@@ -240,6 +262,7 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 		}
 	}
 
+	@ProtectedAbstractMethod
 	protected abstract T next0();
 
 }

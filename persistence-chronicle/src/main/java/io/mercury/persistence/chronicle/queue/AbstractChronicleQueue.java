@@ -9,13 +9,14 @@ import java.util.function.ObjIntConsumer;
 import org.slf4j.Logger;
 
 import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotations.lang.ProtectedAbstractMethod;
 import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ShutdownHooks;
 import io.mercury.common.util.Assertor;
-import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReadParam;
+import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
@@ -100,24 +101,25 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		return internalQueue;
 	}
 
-	public R buildReader(Consumer<T> consumer) {
-		return buildReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), ReadParam.Default(), logger,
+	public R createReader(Consumer<T> consumer) {
+		return createReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), ReaderParam.Default(), logger,
 				consumer);
 	}
 
-	public R buildReader(String readerName, Consumer<T> consumer) {
-		return buildReader(readerName, ReadParam.Default(), logger, consumer);
+	public R createReader(String readerName, Consumer<T> consumer) {
+		return createReader(readerName, ReaderParam.Default(), logger, consumer);
 	}
 
-	public R buildReader(ReadParam readParam, Consumer<T> consumer) {
-		return buildReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), readParam, logger, consumer);
+	public R createReader(ReaderParam readerParam, Consumer<T> consumer) {
+		return createReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), readerParam, logger, consumer);
 	}
 
-	public R buildReader(String readerName, ReadParam readParam, Consumer<T> consumer) {
-		return buildReader(readerName, readParam, logger, consumer);
+	public R createReader(String readerName, ReaderParam readerParam, Consumer<T> consumer) {
+		return createReader(readerName, readerParam, logger, consumer);
 	}
 
-	protected abstract R buildReader(String readerName, ReadParam readParam, Logger logger, Consumer<T> consumer);
+	@ProtectedAbstractMethod
+	protected abstract R createReader(String readerName, ReaderParam readerParam, Logger logger, Consumer<T> consumer);
 
 	@MayThrowsRuntimeException(IllegalStateException.class)
 	public W acquireAppender() {
@@ -128,6 +130,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		return acquireAppender(writerName, logger);
 	}
 
+	@ProtectedAbstractMethod
 	protected abstract W acquireAppender(String writerName, Logger logger);
 
 	protected abstract static class BaseBuilder<B extends BaseBuilder<B>> {
@@ -175,6 +178,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 			return self();
 		}
 
+		@ProtectedAbstractMethod
 		protected abstract B self();
 
 	}
