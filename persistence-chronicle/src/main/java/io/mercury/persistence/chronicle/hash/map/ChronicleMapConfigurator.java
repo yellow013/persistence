@@ -139,7 +139,7 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 		private Class<K> keyClass;
 		private Class<V> valueClass;
 		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-		private String folder = "auto-create-" + DateTimeUtil.datetimeToSecond() + "/";
+		private String folder = "auto-create-" + DateTimeUtil.datetimeOfSecond() + "/";
 
 		private K averageKey;
 		private V averageValue;

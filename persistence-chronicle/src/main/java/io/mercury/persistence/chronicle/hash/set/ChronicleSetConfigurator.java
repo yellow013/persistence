@@ -88,7 +88,7 @@ public final class ChronicleSetConfigurator<K> {
 
 		private Class<K> keyClass;
 		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-		private String folder = "auto-create-" + DateTimeUtil.datetimeToSecond() + "/";
+		private String folder = "auto-create-" + DateTimeUtil.datetimeOfSecond() + "/";
 
 		private K averageKey;
 

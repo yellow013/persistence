@@ -136,7 +136,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	protected abstract static class BaseBuilder<B extends BaseBuilder<B>> {
 
 		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-		private String folder = "auto-create-" + DateTimeUtil.datetimeToSecond() + "/";
+		private String folder = "auto-create-" + DateTimeUtil.datetimeOfSecond() + "/";
 		private boolean readOnly = false;
 		private long epoch = 0L;
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
