@@ -7,7 +7,7 @@ import java.io.File;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.collections.Capacity;
 import io.mercury.common.config.Configurator;
 import io.mercury.common.datetime.DateTimeUtil;

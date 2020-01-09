@@ -2,7 +2,7 @@ package io.mercury.persistence.chronicle.hash.map;
 
 import java.time.LocalDate;
 
-import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.util.Assertor;
 import io.mercury.persistence.chronicle.exception.ChronicleIOException;
