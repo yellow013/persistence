@@ -15,8 +15,8 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
-import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
-import io.mercury.common.annotations.lang.ProtectedAbstractMethod;
+import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
 import io.mercury.common.datetime.TimeConst;
 import io.mercury.common.thread.ThreadUtil;
 import io.mercury.common.util.Assertor;

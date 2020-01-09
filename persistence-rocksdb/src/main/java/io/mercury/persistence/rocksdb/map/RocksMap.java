@@ -12,7 +12,7 @@ import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.Statistics;
 
-import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.thread.ShutdownHooks;
 import io.mercury.common.thread.ThreadUtil;
 import io.mercury.persistence.rocksdb.exception.RocksRuntimeException;

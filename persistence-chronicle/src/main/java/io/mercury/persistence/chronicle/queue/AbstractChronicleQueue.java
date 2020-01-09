@@ -8,8 +8,8 @@ import java.util.function.ObjIntConsumer;
 
 import org.slf4j.Logger;
 
-import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
-import io.mercury.common.annotations.lang.ProtectedAbstractMethod;
+import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
 import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.number.RandomNumber;

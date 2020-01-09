@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 
-import io.mercury.common.annotations.lang.MayThrowsRuntimeException;
-import io.mercury.common.annotations.lang.ProtectedAbstractMethod;
+import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
 import io.mercury.persistence.chronicle.exception.ChronicleWriteException;
 import net.openhft.chronicle.queue.ExcerptAppender;
 
