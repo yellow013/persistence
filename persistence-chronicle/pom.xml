@@ -15,13 +15,9 @@
 
 	<properties>
 		<!-- chronicle-queue last version : 5.17.33 -->
-		<chronicle-queue.version>5.17.33</chronicle-queue.version>
+		<chronicle-queue.version>5.17.38</chronicle-queue.version>
 		<!-- chronicle-map last version : 3.17.8 -->
 		<chronicle-map.version>3.17.8</chronicle-map.version>
-		<!-- chronicle-core last version : 2.17.33 -->
-		<chronicle-core.version>2.17.33</chronicle-core.version>
-		<!-- chronicle-core last version : 2.17.67 -->
-		<chronicle-wire.version>2.17.67</chronicle-wire.version>
 	</properties>
 
 	<dependencies>
@@ -30,54 +26,8 @@
 			<groupId>io.mercury</groupId>
 			<artifactId>commons-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>net.openhft</groupId>
-			<artifactId>chronicle-core</artifactId>
-			<version>${chronicle-core.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.intellij</groupId>
-					<artifactId>annotations</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
-		<dependency>
-			<groupId>net.openhft</groupId>
-			<artifactId>chronicle-wire</artifactId>
-			<version>${chronicle-wire.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.intellij</groupId>
-					<artifactId>annotations</artifactId>
-				</exclusion>
-				<!-- exclusion jna-platform version 4.2.1 and import latest version jna-platform -->
-				<exclusion>
-					<groupId>net.java.dev.jna</groupId>
-					<artifactId>jna-platform</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.java.dev.jna</groupId>
-					<artifactId>jna</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.openhft</groupId>
-					<artifactId>chronicle-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-
-
-		<!-- chronicle-map off-heap and high performance queue framework -->
+		<!-- chronicle-queue Java library for persisted low latency messaging -->
 		<dependency>
 			<groupId>net.openhft</groupId>
 			<artifactId>chronicle-queue</artifactId>
@@ -99,18 +49,6 @@
 				<exclusion>
 					<groupId>net.java.dev.jna</groupId>
 					<artifactId>jna</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.openhft</groupId>
-					<artifactId>chronicle-wire</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.openhft</groupId>
-					<artifactId>chronicle-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.openhft</groupId>
-					<artifactId>chronicle-bytes</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
