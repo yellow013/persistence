@@ -161,7 +161,7 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 			this.keyClass = keyClass;
 			this.valueClass = valueClass;
 			this.rootPath = fixPath(rootPath);
-			this.folder = fixPath(rootPath);
+			this.folder = fixPath(folder);
 		}
 
 		public Builder<K, V> averageKey(K averageKey) {
