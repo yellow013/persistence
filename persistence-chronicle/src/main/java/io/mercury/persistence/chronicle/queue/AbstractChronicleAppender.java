@@ -50,7 +50,7 @@ public abstract class AbstractChronicleAppender<T> {
 			if (t != null)
 				append0(t);
 			else
-				logger.warn("appenderName -> {} received object is null");
+				logger.warn("appenderName -> {} received null object, Not written to queue.");
 		} catch (Exception e) {
 			throw new ChronicleWriteException(e.getMessage(), e);
 		}

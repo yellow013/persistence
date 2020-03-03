@@ -184,13 +184,13 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 
 			public Builder readInterval(TimeUnit timeUnit, long time) {
 				this.readIntervalUnit = Assertor.nonNull(timeUnit, "timeUnit");
-				this.readIntervalTime = Assertor.longGreaterThan(time, 0, "time");
+				this.readIntervalTime = Assertor.greaterThan(time, 0, "time");
 				return this;
 			}
 
 			public Builder delayRead(TimeUnit timeUnit, long time) {
 				this.delayReadUnit = Assertor.nonNull(timeUnit, "timeUnit");
-				this.delayReadTime = Assertor.longGreaterThan(time, 0, "time");
+				this.delayReadTime = Assertor.greaterThan(time, 0, "time");
 				return this;
 			}
 
@@ -246,14 +246,19 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 					throw e;
 			}
 			if (next == null) {
+				// 等待新数据
 				if (waitingData)
 					sleep(readIntervalUnit, readIntervalTime);
 				else {
-					if (readerParam.exitRunnable != null)
+					// 数据读取完毕, 退出读取线程
+					if (readerParam.exitRunnable != null) {
+						// 异步执行退出函数
 						if (readerParam.asyncExit)
 							startNewThread(readerParam.exitRunnable, readerName + "-exit");
+						// 同步执行退出函数
 						else
 							readerParam.exitRunnable.run();
+					}
 					logger.info("reader -> {} running exit", readerName);
 					break;
 				}
