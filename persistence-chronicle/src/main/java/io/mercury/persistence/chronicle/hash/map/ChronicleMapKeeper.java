@@ -22,10 +22,10 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 		this.configurator = Assertor.nonNull(configurator, "configurator");
 	}
 
-	@MayThrowsRuntimeException(ChronicleIOException.class)
 	@Override
+	@MayThrowsRuntimeException(ChronicleIOException.class)
 	public ChronicleMap<K, V> acquire(String filename) throws ChronicleIOException {
-		return super.acquire(Assertor.nonNullAndEmpty(filename, "filename"));
+		return super.acquire(Assertor.nonEmpty(filename, "filename"));
 	}
 
 	@Override
