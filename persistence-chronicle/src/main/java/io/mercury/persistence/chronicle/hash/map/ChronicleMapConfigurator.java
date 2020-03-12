@@ -38,7 +38,11 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 
 	private final String fullInfo;
 
+	// extended use
+	private Builder<K, V> builder;
+
 	private ChronicleMapConfigurator(Builder<K, V> builder) {
+		this.builder = builder;
 		this.keyClass = builder.keyClass;
 		this.valueClass = builder.valueClass;
 		this.averageKey = builder.averageKey;
@@ -56,25 +60,29 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 	}
 
 	private String buildFullInfo() {
-		return savePath.getAbsolutePath() + ":[key==" + keyClass.getSimpleName() + ",value=="
+		return "[SaveTo->" + savePath.getAbsolutePath() + "]:[Key==" + keyClass.getSimpleName() + ",Value=="
 				+ valueClass.getSimpleName() + "]";
-	}
-
-	public static <K, V> ChronicleMapConfigurator<K, V> ext() {
-		return null;
 	}
 
 	private static final String FixedFolder = "chronicle-map/";
 
 	@MayThrowsRuntimeException(NullPointerException.class)
-	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass) {
+	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass)
+			throws NullPointerException {
 		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"), Assertor.nonNull(valueClass, "valueClass"));
 	}
 
+	@MayThrowsRuntimeException(NullPointerException.class)
 	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass,
-			String rootPath, String folder) {
+			String rootPath, String folder) throws NullPointerException {
 		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"), Assertor.nonNull(valueClass, "valueClass"),
 				rootPath, folder);
+	}
+
+	@MayThrowsRuntimeException(NullPointerException.class)
+	public static <K, V> Builder<K, V> reset(@Nonnull ChronicleMapConfigurator<K, V> original)
+			throws NullPointerException {
+		return Assertor.nonNull(original, "original").builder;
 	}
 
 	@Override

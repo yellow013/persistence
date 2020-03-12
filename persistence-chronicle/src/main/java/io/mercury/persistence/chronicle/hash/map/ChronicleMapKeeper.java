@@ -29,16 +29,21 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 	}
 
 	@Override
-	protected ChronicleMap<K, V> createWithKey(String filename) {
+	@MayThrowsRuntimeException(ChronicleIOException.class)
+	protected ChronicleMap<K, V> createWithKey(String filename) throws ChronicleIOException {
 		ChronicleMapBuilder<K, V> builder = ChronicleMapBuilder.of(configurator.keyClass(), configurator.valueClass())
 				.putReturnsNull(configurator.putReturnsNull()).removeReturnsNull(configurator.removeReturnsNull())
 				.entries(configurator.entries());
+		// 设置块大小
 		if (configurator.actualChunkSize() > 0)
 			builder.actualChunkSize(configurator.actualChunkSize());
+		// 基于Key值设置平均长度
 		if (configurator.averageKey() != null)
 			builder.averageKey(configurator.averageKey());
+		// 基于Value值设置平均长度
 		if (configurator.averageValue() != null)
 			builder.averageValue(configurator.averageValue());
+		// 持久化选项
 		if (configurator.persistent()) {
 			File persistedFile = new File(configurator.savePath(), filename);
 			try {
@@ -48,6 +53,7 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 						parentFile.mkdirs();
 					return builder.createPersistedTo(persistedFile);
 				} else {
+					// 是否恢复数据
 					if (configurator.recover())
 						return builder.createOrRecoverPersistedTo(persistedFile);
 					else
