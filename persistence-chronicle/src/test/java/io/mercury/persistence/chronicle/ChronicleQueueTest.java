@@ -13,29 +13,28 @@ import io.mercury.persistence.chronicle.queue.FileCycle;
 
 public class ChronicleQueueTest {
 
-	@Ignore
-	@Test
-	public void test0() {
-		ChronicleStringQueue persistence = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();
-		ChronicleStringAppender writer = persistence.acquireAppender();
-		ChronicleStringReader reader = persistence.createReader(text -> System.out.println(text));
+    @Ignore
+    @Test
+    public void test0() {
 
-		LocalDateTime wantOf = LocalDateTime.of(2019, 9, 26, 20, 35);
-		// Start 2019-09-26T20:35:02.526
+	ChronicleStringQueue persistence = ChronicleStringQueue.newBuilder().fileCycle(FileCycle.MINUTELY).build();
 
-		long epochSecond = wantOf.toEpochSecond(ZoneOffset.ofHours(8));
-		boolean moved = reader.moveTo(epochSecond);
-		System.out.println(moved);
-		reader.runningOnNewThread();
-		while (true) {
-			try {
-				writer.append(LocalDateTime.now().toString());
-				Thread.sleep(10000);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+	ChronicleStringAppender appender = persistence.acquireAppender();
+	ChronicleStringReader reader = persistence.createReader(text -> System.out.println(text));
 
+	boolean moved = reader.moveTo(LocalDateTime.now().minusMinutes(10), ZoneOffset.ofHours(8));
+
+	System.out.println("is moved == " + moved);
+	reader.runningOnNewThread();
+	while (true) {
+	    try {
+		appender.append(LocalDateTime.now().toString());
+		Thread.sleep(8000);
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
 	}
+
+    }
 
 }
