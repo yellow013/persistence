@@ -1,9 +1,8 @@
-package io.mercury.persistence.chronicle.hash.map;
+package io.mercury.persistence.chronicle.hash;
 
-import io.mercury.persistence.chronicle.hash.ScalableChronicle;
 import net.openhft.chronicle.map.ChronicleMap;
 
-public final class ScalableChronicleMap<K, V> implements ScalableChronicle<ChronicleMap<K, V>> {
+public final class AdjustableChronicleMap<K, V> implements AdjustableChronicle<ChronicleMap<K, V>> {
 
 	private ChronicleMap<K, V> entity;
 

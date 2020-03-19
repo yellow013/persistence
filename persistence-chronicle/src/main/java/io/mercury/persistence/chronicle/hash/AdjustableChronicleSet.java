@@ -1,9 +1,8 @@
-package io.mercury.persistence.chronicle.hash.set;
+package io.mercury.persistence.chronicle.hash;
 
-import io.mercury.persistence.chronicle.hash.ScalableChronicle;
 import net.openhft.chronicle.set.ChronicleSet;
 
-public class ScalableChronicleSet<K> implements ScalableChronicle<ChronicleSet<K>> {
+public class AdjustableChronicleSet<K> implements AdjustableChronicle<ChronicleSet<K>> {
 
 	private ChronicleSet<K> entity;
 

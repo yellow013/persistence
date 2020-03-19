@@ -1,4 +1,4 @@
-package io.mercury.persistence.chronicle.hash.map;
+package io.mercury.persistence.chronicle.hash;
 
 import java.io.File;
 import java.io.IOException;
