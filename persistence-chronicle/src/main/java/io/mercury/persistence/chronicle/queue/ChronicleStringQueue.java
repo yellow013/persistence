@@ -11,7 +11,8 @@ import io.mercury.common.thread.ThreadUtil;
 import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam;
 
 @Immutable
-public class ChronicleStringQueue extends AbstractChronicleQueue<String, ChronicleStringReader, ChronicleStringAppender> {
+public class ChronicleStringQueue
+		extends AbstractChronicleQueue<String, ChronicleStringReader, ChronicleStringAppender> {
 
 	private ChronicleStringQueue(Builder builder) {
 		super(builder);
