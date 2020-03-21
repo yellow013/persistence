@@ -65,6 +65,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>io.mercury</groupId>
+				<artifactId>commons-concurrent</artifactId>
+				<version>${io.mercury.commons.version}</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.hibernate.javax.persistence</groupId>
 				<artifactId>hibernate-jpa-2.1-api</artifactId>
 				<version>1.0.2.Final</version>
@@ -73,7 +79,7 @@
 			<dependency>
 				<groupId>io.netty</groupId>
 				<artifactId>netty-buffer</artifactId>
-				<version>4.1.45.Final</version>
+				<version>4.1.48.Final</version>
 			</dependency>
 
 			<!-- Apache Commons Compress software defines an API for working with 
@@ -106,7 +112,7 @@
 			<dependency>
 				<groupId>net.openhft</groupId>
 				<artifactId>zero-allocation-hashing</artifactId>
-				<version>0.10.1</version>
+				<version>0.11</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
