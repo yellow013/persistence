@@ -1,11 +1,9 @@
 package io.mercury.persistence.chronicle;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 import org.junit.Test;
 
-import io.mercury.common.datetime.TimeZones;
 import io.mercury.persistence.chronicle.queue.ChronicleStringAppender;
 import io.mercury.persistence.chronicle.queue.ChronicleStringQueue;
 import io.mercury.persistence.chronicle.queue.ChronicleStringReader;
@@ -17,15 +15,16 @@ public class ChronicleQueueTest {
 	@Test
 	public void test0() {
 
-		ChronicleStringQueue persistence = ChronicleStringQueue.newBuilder().folder("test")
-				.fileCycle(FileCycle.MINUTELY).build();
+		ChronicleStringQueue persistence = ChronicleStringQueue.newBuilder().folder("test2")
+				.fileCycle(FileCycle.LARGE_HOURLY).build();
 
 		ChronicleStringAppender appender = persistence.acquireAppender();
 		ChronicleStringReader reader = persistence.createReader(text -> System.out.println(text));
 
-		//boolean moved = reader.moveTo(LocalDateTime.now().minusMinutes(20), TimeZones.SYSTEM_DEFAULT);
+		// boolean moved = reader.moveTo(LocalDateTime.now().minusMinutes(20),
+		// TimeZones.SYSTEM_DEFAULT);
 
-		//System.out.println("is moved == " + moved);
+		// System.out.println("is moved == " + moved);
 		reader.runningOnNewThread();
 		while (true) {
 			try {

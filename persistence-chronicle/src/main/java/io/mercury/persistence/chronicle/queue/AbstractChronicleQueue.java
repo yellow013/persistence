@@ -3,14 +3,18 @@ package io.mercury.persistence.chronicle.queue;
 import static io.mercury.common.util.StringUtil.fixPath;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 
+import org.eclipse.collections.api.map.primitive.MutableIntObjectMap;
 import org.slf4j.Logger;
 
 import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
+import io.mercury.common.collections.MutableMaps;
 import io.mercury.common.datetime.DateTimeUtil;
+import io.mercury.common.datetime.EpochTime;
 import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.sys.SysProperties;
@@ -74,11 +78,20 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		logger.info("ChronicleQueue ShutdownHook of {} finished", queueName);
 	}
 
+	private MutableIntObjectMap<String> storeFileMap = MutableMaps.newIntObjectHashMap();
+
+	private AtomicInteger lastCycle = new AtomicInteger();
+	
+
 	private void storeFileHandle(int cycle, File file) {
 		logger.info("Released file : cycle==[{}], file==[{}]", cycle, file.getAbsolutePath());
 		if (storeFileListener != null) {
 			storeFileListener.accept(file, cycle);
 		}
+		storeFileMap.put(cycle, file.getAbsolutePath());
+		System.out.println(cycle + " ============ " + EpochTime.hour());
+		lastCycle.set(cycle);
+		
 	}
 
 	public String queueName() {
