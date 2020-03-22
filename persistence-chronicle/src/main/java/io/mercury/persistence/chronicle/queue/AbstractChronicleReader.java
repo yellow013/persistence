@@ -218,7 +218,7 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 	 */
 	@MayThrowsRuntimeException(ChronicleReadException.class)
 	@CheckForNull
-	private T next() throws ChronicleReadException {
+	public T next() throws ChronicleReadException {
 		try {
 			return next0();
 		} catch (Exception e) {

@@ -82,21 +82,21 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	}
 
 	private AtomicInteger lastCycle;
-	private ConcurrentMap<Integer, String> storeFileMap;
+	private ConcurrentMap<Integer, String> cycleFileMap;
 
 	private void buildClearSchedule() {
 		if (fileClearCycle > 0) {
 			this.lastCycle = new AtomicInteger();
-			this.storeFileMap = new NonBlockingHashMap<>();
+			this.cycleFileMap = new NonBlockingHashMap<>();
 			long delay = fileCycle.getSeconds() * fileClearCycle;
 			singleThreadScheduleWithFixedDelay(delay, delay, TimeUnit.SECONDS, () -> {
 				int last = lastCycle.get();
 				int delOffset = last - fileClearCycle;
 				logger.info("Execute clear schedule : lastCycle==[{}], delOffset==[{}]", last, delOffset);
-				Set<Integer> keySet = storeFileMap.keySet();
+				Set<Integer> keySet = cycleFileMap.keySet();
 				for (int saveCycle : keySet) {
 					if (saveCycle < delOffset) {
-						String fileAbsolutePath = storeFileMap.get(saveCycle);
+						String fileAbsolutePath = cycleFileMap.get(saveCycle);
 						logger.info("Delete cycle file : cycle==[{}], fileAbsolutePath==[{}]", saveCycle,
 								fileAbsolutePath);
 						File file = new File(fileAbsolutePath);
@@ -120,7 +120,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 			storeFileListener.accept(file, cycle);
 		}
 		if (fileClearCycle > 0) {
-			storeFileMap.put(cycle, file.getAbsolutePath());
+			cycleFileMap.put(cycle, file.getAbsolutePath());
 			lastCycle.set(cycle);
 		}
 	}
@@ -147,6 +147,13 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 
 	public SingleChronicleQueue internalQueue() {
 		return internalQueue;
+	}
+
+	private static final String EMPTY_CONSUMER_MSG = "Reader consumer is an empty implementation";
+
+	public R createReader() {
+		return createReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), ReaderParam.Default(), logger,
+				o -> logger.info(EMPTY_CONSUMER_MSG));
 	}
 
 	public R createReader(Consumer<T> consumer) {

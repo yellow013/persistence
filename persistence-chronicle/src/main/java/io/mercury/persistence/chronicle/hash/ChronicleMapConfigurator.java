@@ -69,14 +69,22 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 	@MayThrowsRuntimeException(NullPointerException.class)
 	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass)
 			throws NullPointerException {
-		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"), Assertor.nonNull(valueClass, "valueClass"));
+		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"), Assertor.nonNull(valueClass, "valueClass"),
+				SysProperties.JAVA_IO_TMPDIR + "/", "auto-create-" + DateTimeUtil.datetimeOfSecond() + "/");
+	}
+
+	@MayThrowsRuntimeException(NullPointerException.class)
+	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass, String folder)
+			throws NullPointerException {
+		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"), Assertor.nonNull(valueClass, "valueClass"),
+				SysProperties.JAVA_IO_TMPDIR + "/", Assertor.nonNull(folder, "folder"));
 	}
 
 	@MayThrowsRuntimeException(NullPointerException.class)
 	public static <K, V> Builder<K, V> builder(@Nonnull Class<K> keyClass, @Nonnull Class<V> valueClass,
 			String rootPath, String folder) throws NullPointerException {
 		return new Builder<>(Assertor.nonNull(keyClass, "keyClass"), Assertor.nonNull(valueClass, "valueClass"),
-				rootPath, folder);
+				Assertor.nonNull(rootPath, "rootPath"), Assertor.nonNull(folder, "folder"));
 	}
 
 	@MayThrowsRuntimeException(NullPointerException.class)
@@ -146,8 +154,8 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 
 		private Class<K> keyClass;
 		private Class<V> valueClass;
-		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-		private String folder = "auto-create-" + DateTimeUtil.datetimeOfSecond() + "/";
+		private String rootPath;
+		private String folder;
 
 		private K averageKey;
 		private V averageValue;
@@ -159,11 +167,6 @@ public final class ChronicleMapConfigurator<K, V> implements Configurator {
 
 		private long entries = Capacity.L16_SIZE_65536.size();
 		private int actualChunkSize;
-
-		private Builder(Class<K> keyClass, Class<V> valueClass) {
-			this.keyClass = keyClass;
-			this.valueClass = valueClass;
-		}
 
 		private Builder(Class<K> keyClass, Class<V> valueClass, String rootPath, String folder) {
 			this.keyClass = keyClass;
