@@ -32,6 +32,7 @@ public enum FileCycle {
 	private FileCycle(int seconds, RollCycle rollCycle, String desc) {
 		this.seconds = seconds;
 		this.rollCycle = rollCycle;
+		this.desc = desc;
 	}
 
 	public int getSeconds() {

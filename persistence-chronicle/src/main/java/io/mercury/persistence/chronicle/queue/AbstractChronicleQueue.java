@@ -1,30 +1,30 @@
 package io.mercury.persistence.chronicle.queue;
 
+import static io.mercury.common.thread.ScheduleTaskExecutor.singleThreadScheduleWithFixedDelay;
 import static io.mercury.common.util.StringUtil.fixPath;
 
 import java.io.File;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 
-import org.eclipse.collections.api.map.primitive.MutableIntObjectMap;
+import org.jctools.maps.NonBlockingHashMap;
 import org.slf4j.Logger;
 
 import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
-import io.mercury.common.collections.MutableMaps;
 import io.mercury.common.datetime.DateTimeUtil;
-import io.mercury.common.datetime.EpochTime;
 import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.ShutdownHooks;
 import io.mercury.common.util.Assertor;
 import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam;
-import net.openhft.chronicle.queue.impl.TableStore;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
-import net.openhft.chronicle.queue.impl.table.Metadata;
 
 public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W extends AbstractChronicleAppender<T>> {
 
@@ -33,7 +33,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	private final boolean readOnly;
 	private final long epoch;
 	private final FileCycle fileCycle;
-	private final long fileCleanCycle;
+	private final int fileClearCycle;
 	private final ObjIntConsumer<File> storeFileListener;
 
 	private final File savePath;
@@ -49,13 +49,16 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		this.readOnly = builder.readOnly;
 		this.epoch = builder.epoch;
 		this.fileCycle = builder.fileCycle;
-		this.fileCleanCycle = builder.fileCleanCycle;
+		this.fileClearCycle = builder.fileClearCycle <= 0 ? 0
+				: builder.fileClearCycle <= 6 ? 6 : builder.fileClearCycle;
 		this.storeFileListener = builder.storeFileListener;
 		this.logger = builder.logger != null ? builder.logger : logger;
 		this.savePath = new File(rootPath + "chronicle-queue/" + folder);
 		this.queueName = folder;
 		this.internalQueue = buildChronicleQueue();
-		logger.info("ChronicleDataQueue initialized -> name==[{}], desc==[{}]", queueName, fileCycle.getDesc());
+		buildClearSchedule();
+		logger.info("{} initialized -> name==[{}], desc==[{}]", getClass().getSimpleName(), queueName,
+				fileCycle.getDesc());
 	}
 
 	private SingleChronicleQueue buildChronicleQueue() {
@@ -78,20 +81,48 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		logger.info("ChronicleQueue ShutdownHook of {} finished", queueName);
 	}
 
-	private MutableIntObjectMap<String> storeFileMap = MutableMaps.newIntObjectHashMap();
+	private AtomicInteger lastCycle;
+	private ConcurrentMap<Integer, String> storeFileMap;
 
-	private AtomicInteger lastCycle = new AtomicInteger();
-	
+	private void buildClearSchedule() {
+		if (fileClearCycle > 0) {
+			this.lastCycle = new AtomicInteger();
+			this.storeFileMap = new NonBlockingHashMap<>();
+			long delay = fileCycle.getSeconds() * fileClearCycle;
+			singleThreadScheduleWithFixedDelay(delay, delay, TimeUnit.SECONDS, () -> {
+				int last = lastCycle.get();
+				int delOffset = last - fileClearCycle;
+				logger.info("Execute clear schedule : lastCycle==[{}], delOffset==[{}]", last, delOffset);
+				Set<Integer> keySet = storeFileMap.keySet();
+				for (int saveCycle : keySet) {
+					if (saveCycle < delOffset) {
+						String fileAbsolutePath = storeFileMap.get(saveCycle);
+						logger.info("Delete cycle file : cycle==[{}], fileAbsolutePath==[{}]", saveCycle,
+								fileAbsolutePath);
+						File file = new File(fileAbsolutePath);
+						if (file.exists()) {
+							if (!file.delete())
+								logger.warn("File delete failure !!!");
+						} else {
+							logger.error("File not exists, Please check the ChronicleQueue save path : [{}]",
+									savePath.getAbsolutePath());
+						}
+					}
+				}
+			});
+			logger.info("Build clear schedule is finished");
+		}
+	}
 
 	private void storeFileHandle(int cycle, File file) {
 		logger.info("Released file : cycle==[{}], file==[{}]", cycle, file.getAbsolutePath());
 		if (storeFileListener != null) {
 			storeFileListener.accept(file, cycle);
 		}
-		storeFileMap.put(cycle, file.getAbsolutePath());
-		System.out.println(cycle + " ============ " + EpochTime.hour());
-		lastCycle.set(cycle);
-		
+		if (fileClearCycle > 0) {
+			storeFileMap.put(cycle, file.getAbsolutePath());
+			lastCycle.set(cycle);
+		}
 	}
 
 	public String queueName() {
@@ -158,7 +189,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		private long epoch = 0L;
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
 		private ObjIntConsumer<File> storeFileListener;
-		private long fileCleanCycle = 0L;
+		private int fileClearCycle = 0;
 
 		private Logger logger;
 
@@ -187,12 +218,12 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 			return self();
 		}
 
-		public B fileCleanCycle(long fileCleanCycle) {
-			this.fileCleanCycle = fileCleanCycle;
+		public B fileClearCycle(int fileClearCycle) {
+			this.fileClearCycle = fileClearCycle;
 			return self();
 		}
 
-		public B storeFileListener(ObjIntConsumer<File>... storeFileListeners) {
+		public B storeFileListener(ObjIntConsumer<File> storeFileListener) {
 			this.storeFileListener = Assertor.nonNull(storeFileListener, "storeFileListener");
 			return self();
 		}
