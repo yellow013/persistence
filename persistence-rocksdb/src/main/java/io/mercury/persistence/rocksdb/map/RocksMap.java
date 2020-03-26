@@ -32,7 +32,6 @@ public class RocksMap<K extends RocksKey, V extends RocksValue> implements Close
 		Statistics statistics = new Statistics();
 		options.setStatistics(statistics);
 		
-		
 		options.setCreateIfMissing(true);
 		try {
 			this.rocksdb = RocksDB.open(options, savePath);
