@@ -3,6 +3,7 @@ package io.mercury.persistence.chronicle.hash;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -58,7 +59,7 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 						parentFile.mkdirs();
 					return builder.createPersistedTo(persistedFile);
 				} else {
-					// 是否恢复数据
+					// Is recover data
 					if (configurator.recover())
 						return builder.createOrRecoverPersistedTo(persistedFile);
 					else
@@ -74,9 +75,12 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 	@Override
 	public void close() throws IOException {
 		synchronized (lock) {
-			for (ChronicleMap<K, V> map : savedMap.values()) {
+			Set<String> keySet = savedMap.keySet();
+			for (String key : keySet) {
+				ChronicleMap<K, V> map = savedMap.get(key);
 				if (map.isOpen())
 					map.close();
+				savedMap.remove(key);
 			}
 		}
 	}
