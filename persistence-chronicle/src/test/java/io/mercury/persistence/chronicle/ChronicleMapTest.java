@@ -1,5 +1,7 @@
 package io.mercury.persistence.chronicle;
 
+import java.io.IOException;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -21,13 +23,14 @@ public class ChronicleMapTest {
 				.entriesOfPow2(Capacity.L16_SIZE_65536).averageKey(new String(new byte[32])).averageValue(new byte[128])
 				.build();
 
-		ChronicleMapKeeperOfDate<String, byte[]> mapKeeper = new ChronicleMapKeeperOfDate<>(options);
-
-		ChronicleMap<String, byte[]> acquire = mapKeeper.acquire("2019.10.11");
-
-		while (true) {
-			System.out.println(acquire.size());
-			ThreadUtil.sleep(2000);
+		try (ChronicleMapKeeperOfDate<String, byte[]> mapKeeper = new ChronicleMapKeeperOfDate<>(options)) {
+			ChronicleMap<String, byte[]> acquire = mapKeeper.acquire("2019.10.11");
+			while (true) {
+				System.out.println(acquire.size());
+				ThreadUtil.sleep(2000);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 	}
