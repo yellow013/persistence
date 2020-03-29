@@ -1,5 +1,6 @@
 package io.mercury.persistence.chronicle.hash;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
@@ -14,7 +15,7 @@ import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
 
 @ThreadSafe
-public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K, V>> {
+public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K, V>> implements Closeable {
 
 	private ChronicleMapConfigurator<K, V> configurator;
 
@@ -22,10 +23,14 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 		this.configurator = Assertor.nonNull(configurator, "configurator");
 	}
 
+	private Object lock = new Object();
+
 	@Override
 	@MayThrowsRuntimeException(ChronicleIOException.class)
 	public ChronicleMap<K, V> acquire(String filename) throws ChronicleIOException {
-		return super.acquire(Assertor.nonEmpty(filename, "filename"));
+		synchronized (lock) {
+			return super.acquire(Assertor.nonEmpty(filename, "filename"));
+		}
 	}
 
 	@Override
@@ -64,6 +69,16 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 			}
 		} else
 			return builder.create();
+	}
+
+	@Override
+	public void close() throws IOException {
+		synchronized (lock) {
+			for (ChronicleMap<K, V> map : savedMap.values()) {
+				if (map.isOpen())
+					map.close();
+			}
+		}
 	}
 
 }
