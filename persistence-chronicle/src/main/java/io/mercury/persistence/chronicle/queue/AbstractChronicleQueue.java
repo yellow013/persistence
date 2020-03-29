@@ -3,7 +3,9 @@ package io.mercury.persistence.chronicle.queue;
 import static io.mercury.common.thread.ScheduleTaskExecutor.singleThreadScheduleWithFixedDelay;
 import static io.mercury.common.util.StringUtil.fixPath;
 
+import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +28,8 @@ import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderPara
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
-public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W extends AbstractChronicleAppender<T>> {
+public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W extends AbstractChronicleAppender<T>>
+		implements Closeable {
 
 	private final String rootPath;
 	private final String folder;
@@ -147,6 +150,16 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 
 	public SingleChronicleQueue internalQueue() {
 		return internalQueue;
+	}
+
+	public boolean isClosed() {
+		return internalQueue.isClosed();
+	}
+
+	@Override
+	public void close() throws IOException {
+		if (!isClosed())
+			internalQueue.close();
 	}
 
 	private static final String EMPTY_CONSUMER_MSG = "Reader consumer is an empty implementation";
