@@ -52,14 +52,13 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		this.readOnly = builder.readOnly;
 		this.epoch = builder.epoch;
 		this.fileCycle = builder.fileCycle;
-		this.fileClearCycle = builder.fileClearCycle <= 0 ? 0
-				: builder.fileClearCycle <= 6 ? 6 : builder.fileClearCycle;
+		this.fileClearCycle = builder.fileClearCycle <= 0 ? 0 : builder.fileClearCycle < 3 ? 3 : builder.fileClearCycle;
 		this.storeFileListener = builder.storeFileListener;
 		this.logger = builder.logger != null ? builder.logger : logger;
 		this.savePath = new File(rootPath + "chronicle-queue/" + folder);
 		this.queueName = folder.replaceAll("/", "");
 		this.internalQueue = buildChronicleQueue();
-		buildClearSchedule();
+		buildClearTask();
 		logger.info("{} initialized -> name==[{}], desc==[{}]", getClass().getSimpleName(), queueName,
 				fileCycle.getDesc());
 	}
@@ -87,7 +86,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	private AtomicInteger lastCycle;
 	private ConcurrentMap<Integer, String> cycleFileMap;
 
-	private void buildClearSchedule() {
+	private void buildClearTask() {
 		if (fileClearCycle > 0) {
 			this.lastCycle = new AtomicInteger();
 			this.cycleFileMap = new NonBlockingHashMap<>();
