@@ -1,6 +1,7 @@
 package io.mercury.persistence.chronicle.queue;
 
-import static io.mercury.common.thread.ScheduleTaskExecutor.singleThreadScheduleWithFixedDelay;
+import static io.mercury.common.thread.ThreadUtil.sleep;
+import static io.mercury.common.thread.ThreadUtil.startNewThread;
 import static io.mercury.common.util.StringUtil.fixPath;
 
 import java.io.Closeable;
@@ -22,7 +23,9 @@ import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.number.RandomNumber;
 import io.mercury.common.sys.SysProperties;
+import io.mercury.common.thread.RuntimeInterruptedException;
 import io.mercury.common.thread.ShutdownHooks;
+import io.mercury.common.thread.ThreadUtil;
 import io.mercury.common.util.Assertor;
 import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
@@ -58,7 +61,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		this.savePath = new File(rootPath + "chronicle-queue/" + folder);
 		this.queueName = folder.replaceAll("/", "");
 		this.internalQueue = buildChronicleQueue();
-		buildClearTask();
+		buildClearThread();
 		logger.info("{} initialized -> name==[{}], desc==[{}]", getClass().getSimpleName(), queueName,
 				fileCycle.getDesc());
 	}
@@ -77,42 +80,67 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 
 	private void shutdownHandle() {
 		// System.out.println("ChronicleQueue ShutdownHook of " + name + " start");
-		logger.info("ChronicleQueue ShutdownHook of {} start", queueName);
-		internalQueue.close();
+		logger.info("ChronicleQueue [{}] shutdown hook started", queueName);
+		try {
+			this.close();
+		} catch (IOException e) {
+			logger.error("ChronicleQueue [{}] shutdown hook throw exception: {}", queueName, e.getMessage(), e);
+		}
 		// System.out.println("ChronicleQueue ShutdownHook of " + name + " finished");
-		logger.info("ChronicleQueue ShutdownHook of {} finished", queueName);
+		logger.info("ChronicleQueue [{}] shutdown hook finished", queueName);
 	}
 
 	private AtomicInteger lastCycle;
 	private ConcurrentMap<Integer, String> cycleFileMap;
+	private Thread fileClearThread;
+	private volatile boolean isClearRunning = true;
 
-	private void buildClearTask() {
+	private void buildClearThread() {
 		if (fileClearCycle > 0) {
 			this.lastCycle = new AtomicInteger();
 			this.cycleFileMap = new NonBlockingHashMap<>();
 			long delay = fileCycle.getSeconds() * fileClearCycle;
-			singleThreadScheduleWithFixedDelay(delay, delay, TimeUnit.SECONDS, () -> {
-				int last = lastCycle.get();
-				int delOffset = last - fileClearCycle;
-				logger.info("Execute clear schedule : lastCycle==[{}], delOffset==[{}]", last, delOffset);
-				Set<Integer> keySet = cycleFileMap.keySet();
-				for (int saveCycle : keySet) {
-					if (saveCycle < delOffset) {
-						String fileAbsolutePath = cycleFileMap.get(saveCycle);
-						logger.info("Delete cycle file : cycle==[{}], fileAbsolutePath==[{}]", saveCycle,
-								fileAbsolutePath);
-						File file = new File(fileAbsolutePath);
-						if (file.exists()) {
-							if (!file.delete())
-								logger.warn("File delete failure !!!");
-						} else {
-							logger.error("File not exists, Please check the ChronicleQueue save path : [{}]",
-									savePath.getAbsolutePath());
-						}
+			this.fileClearThread = startNewThread(() -> {
+				do {
+					try {
+						sleep(TimeUnit.SECONDS, delay);
+					} catch (RuntimeInterruptedException e) {
+						logger.info("Last execution fileClearTask");
+						fileClearTask();
+						logger.info("{} exit now", ThreadUtil.currentThreadName());
 					}
+					runFileClearTask();
+				} while (isClearRunning);
+			}, queueName + "-FileClear");
+			// singleThreadScheduleWithFixedDelay(delay, delay, TimeUnit.SECONDS,
+			// this::runFileClearTask);
+			logger.info("Build clear thread is finished");
+		}
+	}
+
+	private void runFileClearTask() {
+		if (isClearRunning)
+			fileClearTask();
+	}
+
+	private void fileClearTask() {
+		int last = lastCycle.get();
+		int delOffset = last - fileClearCycle;
+		logger.info("Execute clear schedule : lastCycle==[{}], delOffset==[{}]", last, delOffset);
+		Set<Integer> keySet = cycleFileMap.keySet();
+		for (int saveCycle : keySet) {
+			if (saveCycle < delOffset) {
+				String fileAbsolutePath = cycleFileMap.get(saveCycle);
+				logger.info("Delete cycle file : cycle==[{}], fileAbsolutePath==[{}]", saveCycle, fileAbsolutePath);
+				File file = new File(fileAbsolutePath);
+				if (file.exists()) {
+					if (!file.delete())
+						logger.warn("File delete failure !!!");
+				} else {
+					logger.error("File not exists, Please check the ChronicleQueue save path : [{}]",
+							savePath.getAbsolutePath());
 				}
-			});
-			logger.info("Build clear schedule is finished");
+			}
 		}
 	}
 
@@ -159,6 +187,9 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	public void close() throws IOException {
 		if (!isClosed())
 			internalQueue.close();
+		isClearRunning = false;
+		if (fileClearThread != null)
+			fileClearThread.interrupt();
 	}
 
 	private static final String EMPTY_CONSUMER_MSG = "Reader consumer is an empty implementation";
