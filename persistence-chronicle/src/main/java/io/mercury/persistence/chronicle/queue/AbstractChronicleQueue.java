@@ -7,6 +7,7 @@ import static io.mercury.common.util.StringUtil.fixPath;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.lang.Thread.State;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -134,8 +135,10 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 				logger.info("Delete cycle file : cycle==[{}], fileAbsolutePath==[{}]", saveCycle, fileAbsolutePath);
 				File file = new File(fileAbsolutePath);
 				if (file.exists()) {
-					if (!file.delete())
+					if (!file.delete()) {
 						logger.warn("File delete failure !!!");
+						cycleFileMap.remove(saveCycle);
+					}
 				} else {
 					logger.error("File not exists, Please check the ChronicleQueue save path : [{}]",
 							savePath.getAbsolutePath());
@@ -190,6 +193,8 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		isClearRunning = false;
 		if (fileClearThread != null)
 			fileClearThread.interrupt();
+		while (fileClearThread.getState() != State.TERMINATED)
+			;
 	}
 
 	private static final String EMPTY_CONSUMER_MSG = "Reader consumer is an empty implementation";

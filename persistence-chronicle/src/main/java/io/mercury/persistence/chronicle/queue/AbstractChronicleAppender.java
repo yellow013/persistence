@@ -16,6 +16,8 @@ public abstract class AbstractChronicleAppender<T> {
 	protected final Logger logger;
 	protected final ExcerptAppender excerptAppender;
 
+	private volatile boolean isClose = false;
+
 	AbstractChronicleAppender(String appenderName, Logger logger, ExcerptAppender excerptAppender) {
 		this.appenderName = appenderName;
 		this.logger = logger;
@@ -48,6 +50,7 @@ public abstract class AbstractChronicleAppender<T> {
 	public void append(@Nonnull T t) throws ChronicleWriteException {
 		try {
 			if (t != null)
+
 				append0(t);
 			else
 				logger.warn("appenderName -> {} received null object, Not written to queue.");
