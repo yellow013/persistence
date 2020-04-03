@@ -1,8 +1,12 @@
 package io.mercury.persistence.chronicle.queue;
 
+import static io.mercury.common.datetime.DateTimeUtil.datetimeOfSecond;
+import static io.mercury.common.number.RandomNumber.randomUnsignedInt;
 import static io.mercury.common.thread.ThreadUtil.sleep;
 import static io.mercury.common.thread.ThreadUtil.startNewThread;
+import static io.mercury.common.util.Assertor.nonNull;
 import static io.mercury.common.util.StringUtil.fixPath;
+import static io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam.defaultParam;
 
 import java.io.Closeable;
 import java.io.File;
@@ -14,20 +18,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
+import java.util.function.Supplier;
 
 import org.jctools.maps.NonBlockingHashMap;
 import org.slf4j.Logger;
 
 import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
-import io.mercury.common.datetime.DateTimeUtil;
 import io.mercury.common.log.CommonLoggerFactory;
-import io.mercury.common.number.RandomNumber;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.RuntimeInterruptedException;
 import io.mercury.common.thread.ShutdownHooks;
 import io.mercury.common.thread.ThreadUtil;
-import io.mercury.common.util.Assertor;
 import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
@@ -46,11 +48,11 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	private final File savePath;
 	private final String queueName;
 
-	private final SingleChronicleQueue internalQueue;
+	protected final SingleChronicleQueue internalQueue;
 
 	protected Logger logger = CommonLoggerFactory.getLogger(getClass());;
 
-	AbstractChronicleQueue(BaseBuilder<?> builder) {
+	AbstractChronicleQueue(QueueBuilder<?> builder) {
 		this.rootPath = builder.rootPath;
 		this.folder = builder.folder;
 		this.readOnly = builder.readOnly;
@@ -83,7 +85,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		// System.out.println("ChronicleQueue ShutdownHook of " + name + " start");
 		logger.info("ChronicleQueue [{}] shutdown hook started", queueName);
 		try {
-			this.close();
+			close();
 		} catch (IOException e) {
 			logger.error("ChronicleQueue [{}] shutdown hook throw exception: {}", queueName, e.getMessage(), e);
 		}
@@ -200,21 +202,20 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	private static final String EMPTY_CONSUMER_MSG = "Reader consumer is an empty implementation";
 
 	public R createReader() {
-		return createReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), ReaderParam.Default(), logger,
+		return createReader(queueName + "-Reader-" + randomUnsignedInt(), defaultParam(),
 				o -> logger.info(EMPTY_CONSUMER_MSG));
 	}
 
 	public R createReader(Consumer<T> consumer) {
-		return createReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), ReaderParam.Default(), logger,
-				consumer);
+		return createReader(queueName + "-Reader-" + randomUnsignedInt(), defaultParam(), consumer);
 	}
 
 	public R createReader(String readerName, Consumer<T> consumer) {
-		return createReader(readerName, ReaderParam.Default(), logger, consumer);
+		return createReader(readerName, defaultParam(), consumer);
 	}
 
 	public R createReader(ReaderParam readerParam, Consumer<T> consumer) {
-		return createReader(queueName + "-Reader-" + RandomNumber.randomUnsignedInt(), readerParam, logger, consumer);
+		return createReader(queueName + "-Reader-" + randomUnsignedInt(), readerParam, consumer);
 	}
 
 	public R createReader(String readerName, ReaderParam readerParam, Consumer<T> consumer) {
@@ -225,21 +226,32 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	protected abstract R createReader(String readerName, ReaderParam readerParam, Logger logger, Consumer<T> consumer);
 
 	@MayThrowsRuntimeException(IllegalStateException.class)
-	public W acquireAppender() {
-		return acquireAppender(queueName + "-Appender-" + RandomNumber.randomUnsignedInt(), logger);
+	public W acquireAppender() throws IllegalStateException {
+		return acquireAppender(queueName + "-Appender-" + randomUnsignedInt(), null);
 	}
 
-	public W acquireAppender(String writerName) {
-		return acquireAppender(writerName, logger);
+	@MayThrowsRuntimeException(IllegalStateException.class)
+	public W acquireAppender(String writerName) throws IllegalStateException {
+		return acquireAppender(writerName, null);
+	}
+
+	@MayThrowsRuntimeException(IllegalStateException.class)
+	public W acquireAppender(Supplier<T> supplier) throws IllegalStateException {
+		return acquireAppender(queueName + "-Appender-" + randomUnsignedInt(), supplier);
+	}
+
+	@MayThrowsRuntimeException(IllegalStateException.class)
+	public W acquireAppender(String writerName, Supplier<T> supplier) throws IllegalStateException {
+		return acquireAppender(writerName, logger, supplier);
 	}
 
 	@ProtectedAbstractMethod
-	protected abstract W acquireAppender(String writerName, Logger logger);
+	protected abstract W acquireAppender(String writerName, Logger logger, Supplier<T> supplier);
 
-	protected abstract static class BaseBuilder<B extends BaseBuilder<B>> {
+	protected abstract static class QueueBuilder<B extends QueueBuilder<B>> {
 
 		private String rootPath = SysProperties.JAVA_IO_TMPDIR + "/";
-		private String folder = "auto-create-" + DateTimeUtil.datetimeOfSecond() + "/";
+		private String folder = "auto-create-" + datetimeOfSecond() + "/";
 		private boolean readOnly = false;
 		private long epoch = 0L;
 		private FileCycle fileCycle = FileCycle.SMALL_DAILY;
@@ -269,7 +281,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		}
 
 		public B fileCycle(FileCycle fileCycle) {
-			this.fileCycle = Assertor.nonNull(fileCycle, "fileCycle");
+			this.fileCycle = nonNull(fileCycle, "fileCycle");
 			return self();
 		}
 
@@ -279,7 +291,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		}
 
 		public B storeFileListener(ObjIntConsumer<File> storeFileListener) {
-			this.storeFileListener = Assertor.nonNull(storeFileListener, "storeFileListener");
+			this.storeFileListener = nonNull(storeFileListener, "storeFileListener");
 			return self();
 		}
 

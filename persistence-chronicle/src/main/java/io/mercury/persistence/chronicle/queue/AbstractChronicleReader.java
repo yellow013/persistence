@@ -2,6 +2,8 @@ package io.mercury.persistence.chronicle.queue;
 
 import static io.mercury.common.thread.ThreadUtil.sleep;
 import static io.mercury.common.thread.ThreadUtil.startNewThread;
+import static io.mercury.common.util.Assertor.greaterThan;
+import static io.mercury.common.util.Assertor.nonNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,13 +20,12 @@ import org.slf4j.Logger;
 import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
 import io.mercury.common.datetime.TimeConst;
-import io.mercury.common.thread.ThreadUtil;
-import io.mercury.common.util.Assertor;
 import io.mercury.persistence.chronicle.exception.ChronicleReadException;
+import net.openhft.chronicle.core.io.Closeable;
 import net.openhft.chronicle.queue.ExcerptTailer;
 import net.openhft.chronicle.queue.TailerState;
 
-public abstract class AbstractChronicleReader<T> implements Runnable {
+public abstract class AbstractChronicleReader<T> implements Runnable, Closeable {
 
 	private final String readerName;
 	private final FileCycle fileCycle;
@@ -105,110 +106,15 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 	}
 
 	public Thread runningOnNewThread(String threadName) {
-		return ThreadUtil.startNewThread(this, threadName);
+		return startNewThread(this, threadName);
 	}
 
-	public static final class ReaderParam {
-
-		// 是否读取失败后关闭线程
-		private boolean readFailCrash;
-		// 是否读取失败后记录日志
-		private boolean readFailLogging;
-		// 读取间隔时间单位
-		private TimeUnit readIntervalUnit;
-		// 读取时间
-		private long readIntervalTime;
-		// 延迟读取时间单位
-		private TimeUnit delayReadUnit;
-		// 延迟读取时间
-		private long delayReadTime;
-		// 是否等待数据写入
-		private boolean waitingData;
-		// 是否以异步方式退出
-		private boolean asyncExit;
-		// 退出函数
-		private Runnable exitRunnable;
-
-		private ReaderParam(Builder builder) {
-			this.readFailCrash = builder.readFailCrash;
-			this.readFailLogging = builder.readFailLogging;
-			this.readIntervalUnit = builder.readIntervalUnit;
-			this.readIntervalTime = builder.readIntervalTime;
-			this.delayReadUnit = builder.delayReadUnit;
-			this.delayReadTime = builder.delayReadTime;
-			this.waitingData = builder.waitingData;
-			this.asyncExit = builder.asyncExit;
-			this.exitRunnable = builder.exitRunnable;
-		}
-
-		public static Builder newBuilder() {
-			return new Builder();
-		}
-
-		static ReaderParam Default() {
-			return new Builder().build();
-		}
-
-		public static class Builder {
-
-			private boolean readFailCrash = false;
-			private boolean readFailLogging = true;
-			private boolean waitingData = true;
-
-			// 缺省读取间隔
-			private TimeUnit readIntervalUnit = TimeUnit.MILLISECONDS;
-			private long readIntervalTime = 100;
-
-			// 缺省延迟时间
-			private TimeUnit delayReadUnit = TimeUnit.MILLISECONDS;
-			private long delayReadTime = 0;
-
-			// 缺省退出方式
-			private boolean asyncExit = false;
-			private Runnable exitRunnable;
-
-			public Builder readFailCrash(boolean readFailCrash) {
-				this.readFailCrash = readFailCrash;
-				return this;
-			}
-
-			public Builder readFailLogging(boolean readFailLogging) {
-				this.readFailLogging = readFailLogging;
-				return this;
-			}
-
-			public Builder waitingData(boolean waitingData) {
-				this.waitingData = waitingData;
-				return this;
-			}
-
-			public Builder readInterval(TimeUnit timeUnit, long time) {
-				this.readIntervalUnit = Assertor.nonNull(timeUnit, "timeUnit");
-				this.readIntervalTime = Assertor.greaterThan(time, 0, "time");
-				return this;
-			}
-
-			public Builder delayRead(TimeUnit timeUnit, long time) {
-				this.delayReadUnit = Assertor.nonNull(timeUnit, "timeUnit");
-				this.delayReadTime = Assertor.greaterThan(time, 0, "time");
-				return this;
-			}
-
-			public Builder asyncExit(boolean asyncExit) {
-				this.asyncExit = asyncExit;
-				return this;
-			}
-
-			public Builder exitRunnable(@Nullable Runnable exitRunnable) {
-				this.exitRunnable = exitRunnable;
-				return this;
-			}
-
-			public ReaderParam build() {
-				return new ReaderParam(this);
-			}
-		}
-	}
+	/**
+	 * 
+	 * @return
+	 */
+	@ProtectedAbstractMethod
+	protected abstract T next0();
 
 	/**
 	 * Get next element of current cursor position.
@@ -250,16 +156,8 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 				if (waitingData)
 					sleep(readIntervalUnit, readIntervalTime);
 				else {
-					// 数据读取完毕, 退出读取线程
-					if (readerParam.exitRunnable != null) {
-						// 异步执行退出函数
-						if (readerParam.asyncExit)
-							startNewThread(readerParam.exitRunnable, readerName + "-exit");
-						// 同步执行退出函数
-						else
-							readerParam.exitRunnable.run();
-					}
-					logger.info("reader -> {} running exit", readerName);
+					// 数据读取完毕, 退出线程
+					exit();
 					break;
 				}
 			} else
@@ -267,7 +165,125 @@ public abstract class AbstractChronicleReader<T> implements Runnable {
 		}
 	}
 
-	@ProtectedAbstractMethod
-	protected abstract T next0();
+	private void exit() {
+		Runnable exitRunnable = readerParam.exitRunnable;
+		if (exitRunnable != null) {
+			// 异步执行退出函数
+			if (readerParam.asyncExit)
+				startNewThread(exitRunnable, readerName + "-exit");
+			// 同步执行退出函数
+			else
+				exitRunnable.run();
+		}
+		logger.info("reader -> {} running exit", readerName);
+	}
+
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public static final class ReaderParam {
+
+		// 是否读取失败后关闭线程
+		private boolean readFailCrash;
+		// 是否读取失败后记录日志
+		private boolean readFailLogging;
+		// 读取间隔时间单位
+		private TimeUnit readIntervalUnit;
+		// 读取时间
+		private long readIntervalTime;
+		// 延迟读取时间单位
+		private TimeUnit delayReadUnit;
+		// 延迟读取时间
+		private long delayReadTime;
+		// 是否等待数据写入
+		private boolean waitingData;
+		// 是否以异步方式退出
+		private boolean asyncExit;
+		// 退出函数
+		private Runnable exitRunnable;
+
+		private ReaderParam(Builder builder) {
+			this.readFailCrash = builder.readFailCrash;
+			this.readFailLogging = builder.readFailLogging;
+			this.readIntervalUnit = builder.readIntervalUnit;
+			this.readIntervalTime = builder.readIntervalTime;
+			this.delayReadUnit = builder.delayReadUnit;
+			this.delayReadTime = builder.delayReadTime;
+			this.waitingData = builder.waitingData;
+			this.asyncExit = builder.asyncExit;
+			this.exitRunnable = builder.exitRunnable;
+		}
+
+		public static Builder newBuilder() {
+			return new Builder();
+		}
+
+		static ReaderParam defaultParam() {
+			return new Builder().build();
+		}
+
+		public static class Builder {
+
+			private boolean readFailCrash = false;
+			private boolean readFailLogging = true;
+			private boolean waitingData = true;
+
+			// 缺省读取间隔
+			private TimeUnit readIntervalUnit = TimeUnit.MILLISECONDS;
+			private long readIntervalTime = 100;
+
+			// 缺省延迟时间
+			private TimeUnit delayReadUnit = TimeUnit.MILLISECONDS;
+			private long delayReadTime = 0;
+
+			// 缺省退出方式
+			private boolean asyncExit = false;
+			private Runnable exitRunnable;
+
+			public Builder readFailCrash(boolean readFailCrash) {
+				this.readFailCrash = readFailCrash;
+				return this;
+			}
+
+			public Builder readFailLogging(boolean readFailLogging) {
+				this.readFailLogging = readFailLogging;
+				return this;
+			}
+
+			public Builder waitingData(boolean waitingData) {
+				this.waitingData = waitingData;
+				return this;
+			}
+
+			public Builder readInterval(TimeUnit timeUnit, long time) {
+				this.readIntervalUnit = nonNull(timeUnit, "timeUnit");
+				this.readIntervalTime = greaterThan(time, 0, "time");
+				return this;
+			}
+
+			public Builder delayRead(TimeUnit timeUnit, long time) {
+				this.delayReadUnit = nonNull(timeUnit, "timeUnit");
+				this.delayReadTime = greaterThan(time, 0, "time");
+				return this;
+			}
+
+			public Builder asyncExit(boolean asyncExit) {
+				this.asyncExit = asyncExit;
+				return this;
+			}
+
+			public Builder exitRunnable(@Nullable Runnable exitRunnable) {
+				this.exitRunnable = nonNull(exitRunnable, "exitRunnable");
+				return this;
+			}
+
+			public ReaderParam build() {
+				return new ReaderParam(this);
+			}
+		}
+	}
 
 }
