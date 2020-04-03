@@ -2,6 +2,7 @@ package io.mercury.persistence.chronicle.queue;
 
 import java.nio.ByteBuffer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -32,15 +33,15 @@ public class ChronicleBytesQueue
 	protected ChronicleBytesReader createReader(String readerName, ReaderParam readerParam, Logger logger,
 			Consumer<ByteBuffer> consumer) {
 		return new ChronicleBytesReader(readerName, fileCycle(), readerParam, logger, bufferSize, useDirectMemory,
-				internalQueue().createTailer(), consumer);
+				internalQueue.createTailer(), consumer);
 	}
 
 	@Override
-	protected ChronicleBytesAppender acquireAppender(String writerName, Logger logger) {
-		return new ChronicleBytesAppender(writerName, logger, internalQueue().acquireAppender());
+	protected ChronicleBytesAppender acquireAppender(String writerName, Logger logger, Supplier<ByteBuffer> supplier) {
+		return new ChronicleBytesAppender(writerName, logger, internalQueue.acquireAppender(), supplier);
 	}
 
-	public static class Builder extends BaseBuilder<Builder> {
+	public static final class Builder extends QueueBuilder<Builder> {
 
 		private int bufferSize = 256;
 		private boolean useDirectMemory = false;

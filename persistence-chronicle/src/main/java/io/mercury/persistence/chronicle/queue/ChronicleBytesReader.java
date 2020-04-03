@@ -1,5 +1,8 @@
 package io.mercury.persistence.chronicle.queue;
 
+import static net.openhft.chronicle.bytes.Bytes.elasticByteBuffer;
+import static net.openhft.chronicle.bytes.Bytes.elasticHeapByteBuffer;
+
 import java.nio.ByteBuffer;
 import java.util.function.Consumer;
 
@@ -28,10 +31,10 @@ public final class ChronicleBytesReader extends AbstractChronicleReader<ByteBuff
 		Bytes<ByteBuffer> bytes;
 		if (useDirectMemory)
 			// use direct memory
-			bytes = Bytes.elasticByteBuffer(bufferSize);
+			bytes = elasticByteBuffer(bufferSize);
 		else
 			// use heap memory
-			bytes = Bytes.elasticHeapByteBuffer(bufferSize);
+			bytes = elasticHeapByteBuffer(bufferSize);
 		excerptTailer.readBytes(bytes);
 		if (bytes.isEmpty())
 			return null;
