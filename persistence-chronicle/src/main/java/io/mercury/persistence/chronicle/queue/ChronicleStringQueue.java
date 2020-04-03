@@ -1,6 +1,7 @@
 package io.mercury.persistence.chronicle.queue;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -25,16 +26,16 @@ public class ChronicleStringQueue
 	@Override
 	protected ChronicleStringReader createReader(String readerName, ReaderParam readerParam, Logger logger,
 			Consumer<String> consumer) {
-		return new ChronicleStringReader(readerName, fileCycle(), readerParam, logger, internalQueue().createTailer(),
+		return new ChronicleStringReader(readerName, fileCycle(), readerParam, logger, internalQueue.createTailer(),
 				consumer);
 	}
 
 	@Override
-	protected ChronicleStringAppender acquireAppender(String writerName, Logger logger) {
-		return new ChronicleStringAppender(writerName, logger, internalQueue().acquireAppender());
+	protected ChronicleStringAppender acquireAppender(String writerName, Logger logger, Supplier<String> supplier) {
+		return new ChronicleStringAppender(writerName, logger, internalQueue.acquireAppender(), supplier);
 	}
 
-	public static class Builder extends BaseBuilder<Builder> {
+	public static final class Builder extends QueueBuilder<Builder> {
 
 		private Builder() {
 		}
