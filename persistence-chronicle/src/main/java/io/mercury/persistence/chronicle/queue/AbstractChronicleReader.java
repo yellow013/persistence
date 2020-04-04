@@ -21,11 +21,11 @@ import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
 import io.mercury.common.datetime.TimeConst;
 import io.mercury.persistence.chronicle.exception.ChronicleReadException;
-import net.openhft.chronicle.core.io.Closeable;
+import io.mercury.persistence.chronicle.queue.AbstractChronicleQueue.CloseableChronicleAccessor;
 import net.openhft.chronicle.queue.ExcerptTailer;
 import net.openhft.chronicle.queue.TailerState;
 
-public abstract class AbstractChronicleReader<T> implements Runnable, Closeable {
+public abstract class AbstractChronicleReader<T> extends CloseableChronicleAccessor implements Runnable {
 
 	private final String readerName;
 	private final FileCycle fileCycle;
@@ -37,8 +37,9 @@ public abstract class AbstractChronicleReader<T> implements Runnable, Closeable 
 
 	private final Consumer<T> consumer;
 
-	AbstractChronicleReader(String readerName, FileCycle fileCycle, ReaderParam readerParam, Logger logger,
-			ExcerptTailer excerptTailer, Consumer<T> consumer) {
+	AbstractChronicleReader(long allocationNo, String readerName, FileCycle fileCycle, ReaderParam readerParam,
+			Logger logger, ExcerptTailer excerptTailer, Consumer<T> consumer) {
+		super(allocationNo);
 		this.readerName = readerName;
 		this.fileCycle = fileCycle;
 		this.readerParam = readerParam;
@@ -124,7 +125,10 @@ public abstract class AbstractChronicleReader<T> implements Runnable, Closeable 
 	 */
 	@MayThrowsRuntimeException(ChronicleReadException.class)
 	@CheckForNull
-	public T next() throws ChronicleReadException {
+	public T next() throws IllegalStateException, ChronicleReadException {
+		if (isClose) {
+			throw new IllegalStateException("Unable to read next, Chronicle queue is closed");
+		}
 		try {
 			return next0();
 		} catch (Exception e) {
@@ -142,6 +146,11 @@ public abstract class AbstractChronicleReader<T> implements Runnable, Closeable 
 		if (readerParam.delayReadTime > 0)
 			sleep(readerParam.delayReadUnit, readerParam.delayReadTime);
 		for (;;) {
+			if (isClose) {
+				logger.info("ChronicleReader is cloesd, execute exit()");
+				exit();
+				break;
+			}
 			T next = null;
 			try {
 				next = next();
@@ -179,8 +188,7 @@ public abstract class AbstractChronicleReader<T> implements Runnable, Closeable 
 	}
 
 	@Override
-	public void close() {
-		// TODO Auto-generated method stub
+	protected void close0() {
 
 	}
 
