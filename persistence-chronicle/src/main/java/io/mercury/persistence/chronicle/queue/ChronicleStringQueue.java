@@ -31,9 +31,9 @@ public class ChronicleStringQueue
 	}
 
 	@Override
-	protected ChronicleStringAppender acquireAppender(String writerName, Logger logger, Supplier<String> supplier)
+	protected ChronicleStringAppender acquireAppender(String appenderName, Logger logger, Supplier<String> supplier)
 			throws IllegalStateException {
-		return new ChronicleStringAppender(System.nanoTime(), writerName, logger, internalQueue.acquireAppender(),
+		return new ChronicleStringAppender(System.nanoTime(), appenderName, logger, internalQueue.acquireAppender(),
 				supplier);
 	}
 

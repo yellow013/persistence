@@ -51,8 +51,6 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 
 	protected Logger logger = CommonLoggerFactory.getLogger(getClass());;
 
-//	private LongFunction<R>
-
 	AbstractChronicleQueue(QueueBuilder<?> builder) {
 		this.rootPath = builder.rootPath;
 		this.folder = builder.folder;
@@ -206,6 +204,10 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 			;
 	}
 
+	private String generateReaderName() {
+		return queueName + "-Reader-" + randomUnsignedInt();
+	}
+
 	private static final String EMPTY_CONSUMER_MSG = "Reader consumer is an empty implementation";
 
 	/**
@@ -214,8 +216,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	 * @throws IllegalStateException
 	 */
 	public R createReader() throws IllegalStateException {
-		return createReader(queueName + "-Reader-" + randomUnsignedInt(), defaultParam(),
-				o -> logger.info(EMPTY_CONSUMER_MSG));
+		return createReader(generateReaderName(), defaultParam(), o -> logger.info(EMPTY_CONSUMER_MSG));
 	}
 
 	/**
@@ -225,7 +226,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	 * @throws IllegalStateException
 	 */
 	public R createReader(Consumer<T> consumer) throws IllegalStateException {
-		return createReader(queueName + "-Reader-" + randomUnsignedInt(), defaultParam(), consumer);
+		return createReader(generateReaderName(), defaultParam(), consumer);
 	}
 
 	/**
@@ -247,7 +248,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	 * @throws IllegalStateException
 	 */
 	public R createReader(ReaderParam readerParam, Consumer<T> consumer) throws IllegalStateException {
-		return createReader(queueName + "-Reader-" + randomUnsignedInt(), readerParam, consumer);
+		return createReader(generateReaderName(), readerParam, consumer);
 	}
 
 	/**
@@ -280,13 +281,17 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	protected abstract R createReader(String readerName, ReaderParam readerParam, Logger logger, Consumer<T> consumer)
 			throws IllegalStateException;
 
+	private String generateAppenderName() {
+		return queueName + "-Appender-" + randomUnsignedInt();
+	}
+
 	/**
 	 * 
 	 * @return
 	 * @throws IllegalStateException
 	 */
 	public A acquireAppender() throws IllegalStateException {
-		return acquireAppender(queueName + "-Appender-" + randomUnsignedInt(), null);
+		return acquireAppender(generateAppenderName(), null);
 	}
 
 	/**
@@ -295,8 +300,8 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	 * @return
 	 * @throws IllegalStateException
 	 */
-	public A acquireAppender(String writerName) throws IllegalStateException {
-		return acquireAppender(writerName, null);
+	public A acquireAppender(String appenderName) throws IllegalStateException {
+		return acquireAppender(appenderName, null);
 	}
 
 	/**
@@ -306,7 +311,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	 * @throws IllegalStateException
 	 */
 	public A acquireAppender(Supplier<T> supplier) throws IllegalStateException {
-		return acquireAppender(queueName + "-Appender-" + randomUnsignedInt(), supplier);
+		return acquireAppender(generateAppenderName(), supplier);
 	}
 
 	/**
@@ -316,10 +321,10 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	 * @return
 	 * @throws IllegalStateException
 	 */
-	public A acquireAppender(String writerName, Supplier<T> supplier) throws IllegalStateException {
+	public A acquireAppender(String appenderName, Supplier<T> supplier) throws IllegalStateException {
 		if (isClosed())
 			throw new IllegalStateException("Cannot be acquire appender, Chronicle queue is closed");
-		A appender = acquireAppender(writerName, logger, supplier);
+		A appender = acquireAppender(appenderName, logger, supplier);
 		addAccessor(appender);
 		return appender;
 	}
@@ -333,7 +338,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	 * @throws IllegalStateException
 	 */
 	@ProtectedAbstractMethod
-	protected abstract A acquireAppender(String writerName, Logger logger, Supplier<T> supplier)
+	protected abstract A acquireAppender(String appenderName, Logger logger, Supplier<T> supplier)
 			throws IllegalStateException;
 
 	protected abstract static class QueueBuilder<B extends QueueBuilder<B>> {
@@ -401,7 +406,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		}
 	}
 
-	private synchronized void closeAllAccessor() {
+	private void closeAllAccessor() {
 		synchronized (allocatedAccessor) {
 			for (CloseableChronicleAccessor accessor : allocatedAccessor.values()) {
 				if (!accessor.isClosed())
@@ -437,6 +442,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 			return isClose;
 		}
 
+		@ProtectedAbstractMethod
 		protected abstract void close0();
 
 	}

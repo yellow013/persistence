@@ -37,9 +37,9 @@ public class ChronicleBytesQueue
 	}
 
 	@Override
-	protected ChronicleBytesAppender acquireAppender(String writerName, Logger logger, Supplier<ByteBuffer> supplier)
+	protected ChronicleBytesAppender acquireAppender(String appenderName, Logger logger, Supplier<ByteBuffer> supplier)
 			throws IllegalStateException {
-		return new ChronicleBytesAppender(System.nanoTime(), writerName, logger, internalQueue.acquireAppender(),
+		return new ChronicleBytesAppender(System.nanoTime(), appenderName, logger, internalQueue.acquireAppender(),
 				supplier);
 	}
 
