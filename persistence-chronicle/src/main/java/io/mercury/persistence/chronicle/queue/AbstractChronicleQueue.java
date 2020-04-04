@@ -2,17 +2,17 @@ package io.mercury.persistence.chronicle.queue;
 
 import static io.mercury.common.datetime.DateTimeUtil.datetimeOfSecond;
 import static io.mercury.common.number.RandomNumber.randomUnsignedInt;
+import static io.mercury.common.thread.ThreadUtil.currentThreadName;
 import static io.mercury.common.thread.ThreadUtil.sleep;
 import static io.mercury.common.thread.ThreadUtil.startNewThread;
 import static io.mercury.common.util.Assertor.nonNull;
 import static io.mercury.common.util.StringUtil.fixPath;
 import static io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam.defaultParam;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 import java.lang.Thread.State;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,22 +20,21 @@ import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
 
-import org.jctools.maps.NonBlockingHashMap;
+import org.eclipse.collections.api.map.primitive.MutableLongObjectMap;
 import org.slf4j.Logger;
 
-import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
+import io.mercury.common.collections.MutableMaps;
 import io.mercury.common.log.CommonLoggerFactory;
 import io.mercury.common.sys.SysProperties;
 import io.mercury.common.thread.RuntimeInterruptedException;
 import io.mercury.common.thread.ShutdownHooks;
-import io.mercury.common.thread.ThreadUtil;
 import io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueueBuilder;
 
-public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, W extends AbstractChronicleAppender<T>>
-		implements Closeable {
+public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReader<T>, A extends AbstractChronicleAppender<T>>
+		implements net.openhft.chronicle.core.io.Closeable {
 
 	private final String rootPath;
 	private final String folder;
@@ -51,6 +50,8 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	protected final SingleChronicleQueue internalQueue;
 
 	protected Logger logger = CommonLoggerFactory.getLogger(getClass());;
+
+//	private LongFunction<R>
 
 	AbstractChronicleQueue(QueueBuilder<?> builder) {
 		this.rootPath = builder.rootPath;
@@ -86,7 +87,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 		logger.info("ChronicleQueue [{}] shutdown hook started", queueName);
 		try {
 			close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("ChronicleQueue [{}] shutdown hook throw exception: {}", queueName, e.getMessage(), e);
 		}
 		// System.out.println("ChronicleQueue ShutdownHook of " + name + " finished");
@@ -101,7 +102,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	private void buildClearThread() {
 		if (fileClearCycle > 0) {
 			this.lastCycle = new AtomicInteger();
-			this.cycleFileMap = new NonBlockingHashMap<>();
+			this.cycleFileMap = new ConcurrentHashMap<>();
 			long delay = fileCycle.getSeconds() * fileClearCycle;
 			this.fileClearThread = startNewThread(() -> {
 				do {
@@ -110,7 +111,7 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 					} catch (RuntimeInterruptedException e) {
 						logger.info("Last execution fileClearTask");
 						fileClearTask();
-						logger.info("{} exit now", ThreadUtil.currentThreadName());
+						logger.info("{} exit now", currentThreadName());
 					}
 					runFileClearTask();
 				} while (isClearRunning);
@@ -189,10 +190,16 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 	}
 
 	@Override
-	public void close() throws IOException {
-		if (!isClosed())
-			internalQueue.close();
+	public void close() {
+		if (isClosed())
+			return;
+		// 关闭外部访问器
+		closeAllAccessor();
+		// 关闭队列
+		internalQueue.close();
+		// 停止运行文件清理线程
 		isClearRunning = false;
+		// 中断正在休眠的清理线程
 		if (fileClearThread != null)
 			fileClearThread.interrupt();
 		while (fileClearThread.getState() != State.TERMINATED)
@@ -201,52 +208,133 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 
 	private static final String EMPTY_CONSUMER_MSG = "Reader consumer is an empty implementation";
 
-	public R createReader() {
+	/**
+	 * 
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	public R createReader() throws IllegalStateException {
 		return createReader(queueName + "-Reader-" + randomUnsignedInt(), defaultParam(),
 				o -> logger.info(EMPTY_CONSUMER_MSG));
 	}
 
-	public R createReader(Consumer<T> consumer) {
+	/**
+	 * 
+	 * @param consumer
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	public R createReader(Consumer<T> consumer) throws IllegalStateException {
 		return createReader(queueName + "-Reader-" + randomUnsignedInt(), defaultParam(), consumer);
 	}
 
-	public R createReader(String readerName, Consumer<T> consumer) {
+	/**
+	 * 
+	 * @param readerName
+	 * @param consumer
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	public R createReader(String readerName, Consumer<T> consumer) throws IllegalStateException {
 		return createReader(readerName, defaultParam(), consumer);
 	}
 
-	public R createReader(ReaderParam readerParam, Consumer<T> consumer) {
+	/**
+	 * 
+	 * @param readerParam
+	 * @param consumer
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	public R createReader(ReaderParam readerParam, Consumer<T> consumer) throws IllegalStateException {
 		return createReader(queueName + "-Reader-" + randomUnsignedInt(), readerParam, consumer);
 	}
 
-	public R createReader(String readerName, ReaderParam readerParam, Consumer<T> consumer) {
-		return createReader(readerName, readerParam, logger, consumer);
+	/**
+	 * 
+	 * @param readerName
+	 * @param readerParam
+	 * @param consumer
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	public R createReader(String readerName, ReaderParam readerParam, Consumer<T> consumer)
+			throws IllegalStateException {
+		if (isClosed())
+			throw new IllegalStateException("Cannot be create reader, Chronicle queue is closed");
+		R reader = createReader(readerName, readerParam, logger, consumer);
+		addAccessor(reader);
+		return reader;
 	}
 
+	/**
+	 * 
+	 * @param readerName
+	 * @param readerParam
+	 * @param logger
+	 * @param consumer
+	 * @return
+	 * @throws IllegalStateException
+	 */
 	@ProtectedAbstractMethod
-	protected abstract R createReader(String readerName, ReaderParam readerParam, Logger logger, Consumer<T> consumer);
+	protected abstract R createReader(String readerName, ReaderParam readerParam, Logger logger, Consumer<T> consumer)
+			throws IllegalStateException;
 
-	@MayThrowsRuntimeException(IllegalStateException.class)
-	public W acquireAppender() throws IllegalStateException {
+	/**
+	 * 
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	public A acquireAppender() throws IllegalStateException {
 		return acquireAppender(queueName + "-Appender-" + randomUnsignedInt(), null);
 	}
 
-	@MayThrowsRuntimeException(IllegalStateException.class)
-	public W acquireAppender(String writerName) throws IllegalStateException {
+	/**
+	 * 
+	 * @param writerName
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	public A acquireAppender(String writerName) throws IllegalStateException {
 		return acquireAppender(writerName, null);
 	}
 
-	@MayThrowsRuntimeException(IllegalStateException.class)
-	public W acquireAppender(Supplier<T> supplier) throws IllegalStateException {
+	/**
+	 * 
+	 * @param supplier
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	public A acquireAppender(Supplier<T> supplier) throws IllegalStateException {
 		return acquireAppender(queueName + "-Appender-" + randomUnsignedInt(), supplier);
 	}
 
-	@MayThrowsRuntimeException(IllegalStateException.class)
-	public W acquireAppender(String writerName, Supplier<T> supplier) throws IllegalStateException {
-		return acquireAppender(writerName, logger, supplier);
+	/**
+	 * 
+	 * @param writerName
+	 * @param supplier
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	public A acquireAppender(String writerName, Supplier<T> supplier) throws IllegalStateException {
+		if (isClosed())
+			throw new IllegalStateException("Cannot be acquire appender, Chronicle queue is closed");
+		A appender = acquireAppender(writerName, logger, supplier);
+		addAccessor(appender);
+		return appender;
 	}
 
+	/**
+	 * 
+	 * @param writerName
+	 * @param logger
+	 * @param supplier
+	 * @return
+	 * @throws IllegalStateException
+	 */
 	@ProtectedAbstractMethod
-	protected abstract W acquireAppender(String writerName, Logger logger, Supplier<T> supplier);
+	protected abstract A acquireAppender(String writerName, Logger logger, Supplier<T> supplier)
+			throws IllegalStateException;
 
 	protected abstract static class QueueBuilder<B extends QueueBuilder<B>> {
 
@@ -302,6 +390,54 @@ public abstract class AbstractChronicleQueue<T, R extends AbstractChronicleReade
 
 		@ProtectedAbstractMethod
 		protected abstract B self();
+
+	}
+
+	private MutableLongObjectMap<CloseableChronicleAccessor> allocatedAccessor = MutableMaps.newLongObjectHashMap();
+
+	private void addAccessor(CloseableChronicleAccessor accessor) {
+		synchronized (allocatedAccessor) {
+			allocatedAccessor.put(accessor.allocationNo, accessor);
+		}
+	}
+
+	private synchronized void closeAllAccessor() {
+		synchronized (allocatedAccessor) {
+			for (CloseableChronicleAccessor accessor : allocatedAccessor.values()) {
+				if (!accessor.isClosed())
+					accessor.close();
+			}
+		}
+	}
+
+	static abstract class CloseableChronicleAccessor implements net.openhft.chronicle.core.io.Closeable {
+
+		protected volatile boolean isClose = false;
+
+		private final long allocationNo;
+
+		protected CloseableChronicleAccessor(long allocationNo) {
+			this.allocationNo = allocationNo;
+		}
+
+		@Override
+		public void close() {
+			this.isClose = true;
+			close0();
+		}
+
+		// TODO 添加关闭访问器回调通知
+		@Override
+		public void notifyClosing() {
+
+		}
+
+		@Override
+		public boolean isClosed() {
+			return isClose;
+		}
+
+		protected abstract void close0();
 
 	}
 
