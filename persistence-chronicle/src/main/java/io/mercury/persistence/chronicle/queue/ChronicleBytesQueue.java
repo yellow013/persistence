@@ -31,14 +31,16 @@ public class ChronicleBytesQueue
 
 	@Override
 	protected ChronicleBytesReader createReader(String readerName, ReaderParam readerParam, Logger logger,
-			Consumer<ByteBuffer> consumer) {
-		return new ChronicleBytesReader(readerName, fileCycle(), readerParam, logger, bufferSize, useDirectMemory,
-				internalQueue.createTailer(), consumer);
+			Consumer<ByteBuffer> consumer) throws IllegalStateException {
+		return new ChronicleBytesReader(System.nanoTime(), readerName, fileCycle(), readerParam, logger, bufferSize,
+				useDirectMemory, internalQueue.createTailer(), consumer);
 	}
 
 	@Override
-	protected ChronicleBytesAppender acquireAppender(String writerName, Logger logger, Supplier<ByteBuffer> supplier) {
-		return new ChronicleBytesAppender(writerName, logger, internalQueue.acquireAppender(), supplier);
+	protected ChronicleBytesAppender acquireAppender(String writerName, Logger logger, Supplier<ByteBuffer> supplier)
+			throws IllegalStateException {
+		return new ChronicleBytesAppender(System.nanoTime(), writerName, logger, internalQueue.acquireAppender(),
+				supplier);
 	}
 
 	public static final class Builder extends QueueBuilder<Builder> {

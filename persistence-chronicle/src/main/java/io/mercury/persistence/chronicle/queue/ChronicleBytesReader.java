@@ -19,9 +19,10 @@ public final class ChronicleBytesReader extends AbstractChronicleReader<ByteBuff
 	private final int bufferSize;
 	private final boolean useDirectMemory;
 
-	ChronicleBytesReader(String name, FileCycle fileCycle, ReaderParam readerParam, Logger logger, int bufferSize,
-			boolean useDirectMemory, ExcerptTailer excerptTailer, Consumer<ByteBuffer> consumer) {
-		super(name, fileCycle, readerParam, logger, excerptTailer, consumer);
+	ChronicleBytesReader(long allocationNo, String readerName, FileCycle fileCycle, ReaderParam readerParam,
+			Logger logger, int bufferSize, boolean useDirectMemory, ExcerptTailer excerptTailer,
+			Consumer<ByteBuffer> consumer) {
+		super(allocationNo, readerName, fileCycle, readerParam, logger, excerptTailer, consumer);
 		this.bufferSize = bufferSize;
 		this.useDirectMemory = useDirectMemory;
 	}

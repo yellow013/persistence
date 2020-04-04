@@ -13,9 +13,9 @@ import net.openhft.chronicle.queue.ExcerptAppender;
 @NotThreadSafe
 public final class ChronicleBytesAppender extends AbstractChronicleAppender<ByteBuffer> {
 
-	ChronicleBytesAppender(String writerName, Logger logger, ExcerptAppender excerptAppender,
+	ChronicleBytesAppender(long allocationNo, String appenderName, Logger logger, ExcerptAppender excerptAppender,
 			Supplier<ByteBuffer> supplier) {
-		super(writerName, logger, excerptAppender, supplier);
+		super(allocationNo, appenderName, logger, excerptAppender, supplier);
 	}
 
 	@Override
