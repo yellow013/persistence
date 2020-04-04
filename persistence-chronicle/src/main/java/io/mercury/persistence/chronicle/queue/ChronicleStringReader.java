@@ -11,9 +11,9 @@ import net.openhft.chronicle.queue.ExcerptTailer;
 @NotThreadSafe
 public final class ChronicleStringReader extends AbstractChronicleReader<String> {
 
-	ChronicleStringReader(String name, FileCycle fileCycle, ReaderParam readerParam, Logger logger,
+	ChronicleStringReader(long allocationNo, String readerName, FileCycle fileCycle, ReaderParam readerParam, Logger logger,
 			ExcerptTailer excerptTailer, Consumer<String> consumer) {
-		super(name, fileCycle, readerParam, logger, excerptTailer, consumer);
+		super(allocationNo, readerName, fileCycle, readerParam, logger, excerptTailer, consumer);
 	}
 
 	@Override

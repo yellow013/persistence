@@ -25,14 +25,16 @@ public class ChronicleStringQueue
 
 	@Override
 	protected ChronicleStringReader createReader(String readerName, ReaderParam readerParam, Logger logger,
-			Consumer<String> consumer) {
-		return new ChronicleStringReader(readerName, fileCycle(), readerParam, logger, internalQueue.createTailer(),
-				consumer);
+			Consumer<String> consumer) throws IllegalStateException {
+		return new ChronicleStringReader(System.nanoTime(), readerName, fileCycle(), readerParam, logger,
+				internalQueue.createTailer(), consumer);
 	}
 
 	@Override
-	protected ChronicleStringAppender acquireAppender(String writerName, Logger logger, Supplier<String> supplier) {
-		return new ChronicleStringAppender(writerName, logger, internalQueue.acquireAppender(), supplier);
+	protected ChronicleStringAppender acquireAppender(String writerName, Logger logger, Supplier<String> supplier)
+			throws IllegalStateException {
+		return new ChronicleStringAppender(System.nanoTime(), writerName, logger, internalQueue.acquireAppender(),
+				supplier);
 	}
 
 	public static final class Builder extends QueueBuilder<Builder> {
