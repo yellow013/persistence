@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
-import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotation.lang.ThrowsRuntimeException;
 import io.mercury.common.collections.customize.BaseKeeper;
 import io.mercury.common.util.Assertor;
 import io.mercury.persistence.chronicle.exception.ChronicleIOException;
@@ -22,7 +22,7 @@ public class ChronicleSetKeeper<K> extends BaseKeeper<String, ChronicleSet<K>> {
 		this.configurator = Assertor.nonNull(configurator, "configurator");
 	}
 
-	@MayThrowsRuntimeException(ChronicleIOException.class)
+	@ThrowsRuntimeException(ChronicleIOException.class)
 	@Override
 	public ChronicleSet<K> acquire(String filename) throws ChronicleIOException {
 		return super.acquire(filename);

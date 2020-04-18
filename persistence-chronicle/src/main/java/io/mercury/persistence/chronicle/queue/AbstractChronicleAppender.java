@@ -6,8 +6,8 @@ import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 
-import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
+import io.mercury.common.annotation.lang.ThrowsRuntimeException;
 import io.mercury.persistence.chronicle.exception.ChronicleWriteException;
 import io.mercury.persistence.chronicle.queue.AbstractChronicleQueue.CloseableChronicleAccessor;
 import net.openhft.chronicle.queue.ExcerptAppender;
@@ -50,12 +50,12 @@ public abstract class AbstractChronicleAppender<T> extends CloseableChronicleAcc
 	protected abstract void append0(@Nonnull T t);
 
 	/**
-	 * append element to queue tail.
 	 * 
 	 * @param t
+	 * @throws IllegalStateException
 	 * @throws ChronicleWriteException
 	 */
-	@MayThrowsRuntimeException(ChronicleWriteException.class)
+	@ThrowsRuntimeException({ IllegalStateException.class, ChronicleWriteException.class })
 	public void append(@Nonnull T t) throws IllegalStateException, ChronicleWriteException {
 		if (isClose) {
 			throw new IllegalStateException("Unable to append data, Chronicle queue is closed");

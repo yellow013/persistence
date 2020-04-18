@@ -17,8 +17,8 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
-import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
 import io.mercury.common.annotation.lang.ProtectedAbstractMethod;
+import io.mercury.common.annotation.lang.ThrowsRuntimeException;
 import io.mercury.common.datetime.TimeConst;
 import io.mercury.persistence.chronicle.exception.ChronicleReadException;
 import io.mercury.persistence.chronicle.queue.AbstractChronicleQueue.CloseableChronicleAccessor;
@@ -121,9 +121,10 @@ public abstract class AbstractChronicleReader<T> extends CloseableChronicleAcces
 	 * Get next element of current cursor position.
 	 * 
 	 * @return
-	 * @throws ChronicleReadExceptions
+	 * @throws IllegalStateException
+	 * @throws ChronicleReadException
 	 */
-	@MayThrowsRuntimeException(ChronicleReadException.class)
+	@ThrowsRuntimeException({ IllegalStateException.class, ChronicleReadException.class })
 	@CheckForNull
 	public T next() throws IllegalStateException, ChronicleReadException {
 		if (isClose) {

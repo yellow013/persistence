@@ -12,7 +12,7 @@ import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.Statistics;
 
-import io.mercury.common.annotation.lang.MayThrowsRuntimeException;
+import io.mercury.common.annotation.lang.ThrowsRuntimeException;
 import io.mercury.common.thread.ShutdownHooks;
 import io.mercury.common.thread.ThreadUtil;
 import io.mercury.persistence.rocksdb.exception.RocksRuntimeException;
@@ -24,7 +24,7 @@ public class RocksMap<K extends RocksKey, V extends RocksValue> implements Close
 	private final Options options;
 	private final RocksDB rocksdb;
 
-	@MayThrowsRuntimeException(RocksRuntimeException.class)
+	@ThrowsRuntimeException(RocksRuntimeException.class)
 	public RocksMap(String savePath) {
 		DBOptions dbOptions = new DBOptions();
 		ColumnFamilyOptions columnFamilyOptions = new ColumnFamilyOptions();
