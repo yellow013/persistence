@@ -1,5 +1,4 @@
-# persistence
-## Persistence & Serialization library ...
+### Persistence & Serialization library ...
 
 Persistence module
 - chronicle
