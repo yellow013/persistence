@@ -7,6 +7,7 @@ import org.eclipse.collections.api.set.MutableSet;
 import org.eclipse.collections.api.tuple.Pair;
 import org.rocksdb.ColumnFamilyOptions;
 import org.rocksdb.DBOptions;
+import org.rocksdb.Holder;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
@@ -56,7 +57,7 @@ public class RocksMap<K extends RocksKey, V extends RocksValue> implements Close
 	}
 
 	public boolean notExist(K key) {
-		return !rocksdb.keyMayExist(key.key(), new StringBuilder());
+		return !rocksdb.keyMayExist(key.key(), new Holder<>());
 	}
 
 	public V get(K key) {
