@@ -15,7 +15,7 @@ import org.rocksdb.Statistics;
 
 import io.mercury.common.annotation.lang.ThrowsRuntimeException;
 import io.mercury.common.thread.ShutdownHooks;
-import io.mercury.common.thread.ThreadUtil;
+import io.mercury.common.thread.ThreadHelper;
 import io.mercury.persistence.rocksdb.exception.RocksRuntimeException;
 import io.mercury.persistence.rocksdb.map.entity.RocksKey;
 import io.mercury.persistence.rocksdb.map.entity.RocksValue;
@@ -48,7 +48,7 @@ public class RocksMap<K extends RocksKey, V extends RocksValue> implements Close
 
 		Runtime.getRuntime().addShutdownHook(
 
-				ThreadUtil.newThread(() -> options.close(), "RocksContainerCloseThread"));
+				ThreadHelper.newThread(() -> options.close(), "RocksContainerCloseThread"));
 
 	}
 
