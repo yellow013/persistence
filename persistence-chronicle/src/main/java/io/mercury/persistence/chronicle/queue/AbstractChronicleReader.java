@@ -1,7 +1,7 @@
 package io.mercury.persistence.chronicle.queue;
 
-import static io.mercury.common.thread.ThreadUtil.sleep;
-import static io.mercury.common.thread.ThreadUtil.startNewThread;
+import static io.mercury.common.thread.ThreadHelper.sleep;
+import static io.mercury.common.thread.ThreadHelper.startNewThread;
 import static io.mercury.common.util.Assertor.greaterThan;
 import static io.mercury.common.util.Assertor.nonNull;
 

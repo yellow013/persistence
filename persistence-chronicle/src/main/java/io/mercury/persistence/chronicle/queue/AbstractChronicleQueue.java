@@ -2,9 +2,9 @@ package io.mercury.persistence.chronicle.queue;
 
 import static io.mercury.common.datetime.DateTimeUtil.datetimeOfSecond;
 import static io.mercury.common.number.RandomNumber.randomUnsignedInt;
-import static io.mercury.common.thread.ThreadUtil.currentThreadName;
-import static io.mercury.common.thread.ThreadUtil.sleep;
-import static io.mercury.common.thread.ThreadUtil.startNewThread;
+import static io.mercury.common.thread.ThreadHelper.currentThreadName;
+import static io.mercury.common.thread.ThreadHelper.sleep;
+import static io.mercury.common.thread.ThreadHelper.startNewThread;
 import static io.mercury.common.util.Assertor.nonNull;
 import static io.mercury.common.util.StringUtil.fixPath;
 import static io.mercury.persistence.chronicle.queue.AbstractChronicleReader.ReaderParam.defaultParam;

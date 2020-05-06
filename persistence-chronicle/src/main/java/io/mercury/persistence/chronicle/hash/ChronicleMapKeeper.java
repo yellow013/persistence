@@ -24,7 +24,7 @@ public class ChronicleMapKeeper<K, V> extends BaseKeeper<String, ChronicleMap<K,
 		this.configurator = Assertor.nonNull(configurator, "configurator");
 	}
 
-	private Object lock = new Object();
+	private final Object lock = new Object();
 
 	@Override
 	@ThrowsRuntimeException(ChronicleIOException.class)
