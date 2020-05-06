@@ -21,6 +21,7 @@
 		<module>persistence-sqlite</module>
 		<module>serialization-avro</module>
 		<module>serialization-json</module>
+		<module>persistence-redis</module>
 	</modules>
 
 	<properties>
@@ -73,12 +74,14 @@
 				<version>${io.mercury.commons.version}</version>
 			</dependency>
 
+			<!-- Java(TM) Persistence API -->
 			<dependency>
-				<groupId>org.hibernate.javax.persistence</groupId>
-				<artifactId>hibernate-jpa-2.1-api</artifactId>
-				<version>1.0.2.Final</version>
+				<groupId>javax.persistence</groupId>
+				<artifactId>javax.persistence-api</artifactId>
+				<version>2.2</version>
 			</dependency>
 
+			<!-- Netty/Buffer -->
 			<dependency>
 				<groupId>io.netty</groupId>
 				<artifactId>netty-buffer</artifactId>
@@ -117,6 +120,7 @@
 				<artifactId>zero-allocation-hashing</artifactId>
 				<version>0.11</version>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
