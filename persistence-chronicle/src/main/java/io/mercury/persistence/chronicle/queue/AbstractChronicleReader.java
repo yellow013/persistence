@@ -178,12 +178,13 @@ public abstract class AbstractChronicleReader<T> extends CloseableChronicleAcces
 	private void exit() {
 		Runnable exitRunnable = readerParam.exitRunnable;
 		if (exitRunnable != null) {
-			// 异步执行退出函数
-			if (readerParam.asyncExit)
+			if (readerParam.asyncExit) {
+				// 异步执行退出函数
 				startNewThread(exitRunnable, readerName + "-exit");
-			// 同步执行退出函数
-			else
+			} else {
+				// 同步执行退出函数
 				exitRunnable.run();
+			}
 		}
 		logger.info("reader -> {} running exit", readerName);
 	}
