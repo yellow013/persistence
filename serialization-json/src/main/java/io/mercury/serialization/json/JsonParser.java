@@ -2,7 +2,6 @@ package io.mercury.serialization.json;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 import static com.alibaba.fastjson.JSON.parseObject;
-import static com.alibaba.fastjson.JSONValidator.from;
 import static io.mercury.common.collections.ImmutableLists.newList;
 import static io.mercury.common.collections.ImmutableMaps.newMap;
 import static io.mercury.common.collections.MutableLists.newFastList;
@@ -22,39 +21,10 @@ import org.eclipse.collections.api.map.MutableMap;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONValidator;
 import com.alibaba.fastjson.JSONValidator.Type;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-public final class JsonUtil {
-
-	/**
-	 * 
-	 */
-	private static final Gson GsonNormal = new GsonBuilder().create();
-
-	/**
-	 * 
-	 * @param obj
-	 * @return
-	 */
-	public static final String toJson(@Nonnull Object obj) {
-		return GsonNormal.toJson(obj);
-	}
-
-	/**
-	 * 
-	 */
-	private static final Gson GsonHasNulls = new GsonBuilder().serializeNulls().create();
-
-	/**
-	 * 
-	 * @param obj
-	 * @return
-	 */
-	public static final String toJsonHasNulls(@Nonnull Object obj) {
-		return GsonHasNulls.toJson(obj);
-	}
+public final class JsonParser {
 
 	/**
 	 * 
@@ -62,7 +32,7 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static boolean isJsonValue(String str) {
-		return from(str).getType() == Type.Value;
+		return JSONValidator.from(str).getType() == Type.Value;
 	}
 
 	/**
@@ -71,7 +41,7 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static boolean isJsonArray(String str) {
-		return from(str).getType() == Type.Array;
+		return JSONValidator.from(str).getType() == Type.Array;
 	}
 
 	/**
@@ -80,11 +50,14 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static boolean isJsonObject(String str) {
-		return from(str).getType() == Type.Object;
+		return JSONValidator.from(str).getType() == Type.Object;
 	}
 
 	/**
 	 * 
+	 * @param json
+	 * @return
+	 * @throws JsonParseException
 	 */
 	public static final JSONObject toJsonObject(@Nonnull String json) throws JsonParseException {
 		try {
@@ -233,19 +206,13 @@ public final class JsonUtil {
 	}
 
 	public static void main(String[] args) {
-
 		Map<String, String> map = new HashMap<>();
 		map.put("A", "1");
 		map.put("B", "2");
 		map.put("C", "11");
 		map.put("D", null);
 		map.put("E", null);
-
-		System.out.println(toJson(map));
-		System.out.println(toJsonHasNulls(map));
-
 		System.out.println(JSON.toJSONString(map));
-
 	}
 
 }
