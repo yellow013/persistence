@@ -43,7 +43,7 @@ public class RocksDBSample {
 //			System.exit(-1);
 //		}
 
-		final String db_path = dbPath;//args[0];
+		final String db_path = dbPath;// args[0];
 		final String db_path_not_found = db_path + "_not_found";
 
 		System.out.println("RocksDBSample");
