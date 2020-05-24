@@ -1,6 +1,6 @@
 package io.mercury.persistence.sqlite;
 
-public class App {
+public class SqliteConnect {
 
 	public static void main(String[] args) {
 		

@@ -15,12 +15,12 @@
 
 	<dependencies>
 
-		<!-- RocksDB fat jar that contains .so files for linux32 and linux64, jnilib 
-			files for Mac OSX, and a .dll for Windows x64. -->
+		<!-- RocksDB fat jar that contains .so files for linux32 and linux64 (glibc 
+			and musl-libc), jnilib files for Mac OSX, and a .dll for Windows x64. -->
 		<dependency>
 			<groupId>org.rocksdb</groupId>
 			<artifactId>rocksdbjni</artifactId>
-			<version>6.7.3</version>
+			<version>6.8.1</version>
 		</dependency>
 
 		<dependency>
@@ -32,6 +32,7 @@
 			<groupId>net.openhft</groupId>
 			<artifactId>zero-allocation-hashing</artifactId>
 		</dependency>
+		
 	</dependencies>
 
 </project>

@@ -17,11 +17,13 @@
 		or off-heap memory. It is a fast, scalable and easy to use embedded Java 
 		database. -->
 	<dependencies>
+
 		<dependency>
 			<groupId>org.mapdb</groupId>
 			<artifactId>mapdb</artifactId>
 			<version>3.0.8</version>
 		</dependency>
+
 	</dependencies>
 
 </project>
