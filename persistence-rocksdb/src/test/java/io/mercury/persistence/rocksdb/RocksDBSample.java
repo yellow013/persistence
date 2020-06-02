@@ -37,6 +37,7 @@ public class RocksDBSample {
 
 	private static String dbPath = "/tmp/rocksdb/test";
 
+	@SuppressWarnings("deprecation")
 	public static void main(final String[] args) {
 //		if (args.length < 1) {
 //			System.out.println("usage: RocksDBSample db_path");
