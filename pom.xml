@@ -85,7 +85,7 @@
 			<dependency>
 				<groupId>io.netty</groupId>
 				<artifactId>netty-buffer</artifactId>
-				<version>4.1.49.Final</version>
+				<version>4.1.50.Final</version>
 			</dependency>
 
 			<!-- Apache Commons Compress software defines an API for working with 
@@ -110,7 +110,7 @@
 			<dependency>
 				<groupId>org.xerial.snappy</groupId>
 				<artifactId>snappy-java</artifactId>
-				<version>1.1.7.3</version>
+				<version>1.1.7.5</version>
 			</dependency>
 
 			<!-- Zero-allocation implementations of fast non-cryptographic hash functions 

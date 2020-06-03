@@ -49,10 +49,12 @@
 
 
 	<dependencies>
+
 		<dependency>
 			<groupId>io.mercury</groupId>
 			<artifactId>commons-core</artifactId>
 		</dependency>
+
 		<!-- Avro core components -->
 		<dependency>
 			<groupId>org.apache.avro</groupId>
@@ -73,6 +75,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<!-- Avro inter-process communication components -->
 		<dependency>
 			<groupId>org.apache.avro</groupId>
@@ -97,6 +100,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<!-- Compilers for Avro IDL and Avro Specific Java API -->
 		<dependency>
 			<groupId>org.apache.avro</groupId>
@@ -115,19 +119,17 @@
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.apache.velocity</groupId>
-					<artifactId>velocity-engine-core</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<!-- General data-binding functionality for Jackson: works on core streaming 
 			API -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.10.3</version>
+			<version>2.10.4</version>
 		</dependency>
+
 	</dependencies>
 
 </project>
