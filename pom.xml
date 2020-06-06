@@ -87,6 +87,41 @@
 				<artifactId>netty-buffer</artifactId>
 				<version>4.1.50.Final</version>
 			</dependency>
+			
+			<!-- Netty/Handler -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-handler</artifactId>
+				<version>4.1.50.Final</version>
+			</dependency>
+			
+			<!-- Netty/Codec -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-codec</artifactId>
+				<version>4.1.50.Final</version>
+			</dependency>
+			
+			<!-- Netty/Common -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-common</artifactId>
+				<version>4.1.50.Final</version>
+			</dependency>
+			
+			<!-- Netty/Transport -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-transport</artifactId>
+				<version>4.1.50.Final</version>
+			</dependency>
+			
+			<!-- Netty/Resolver -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-resolver</artifactId>
+				<version>4.1.50.Final</version>
+			</dependency>
 
 			<!-- Apache Commons Compress software defines an API for working with 
 				compression and archive formats. These include: bzip2, gzip, pack200, lzma, 
