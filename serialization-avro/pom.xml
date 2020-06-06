@@ -122,6 +122,12 @@
 			</exclusions>
 		</dependency>
 
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-avro</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
 		<!-- General data-binding functionality for Jackson: works on core streaming 
 			API -->
 		<dependency>
